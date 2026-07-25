@@ -1,5 +1,10 @@
 # Confido — Deduction Recovery Tool
 
+![CI](https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project/actions/workflows/ci.yml/badge.svg)
+![Node](https://img.shields.io/badge/node-18%2B-brightgreen)
+![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 An internal tool for tracking, triaging, and recovering retailer deductions across companies. Replaces the analyst's spreadsheet with a structured workflow, JWT authentication, mandatory audit trail, file attachments, data quality enforcement, and a recovery-focused dashboard.
 
 ## How to Run
