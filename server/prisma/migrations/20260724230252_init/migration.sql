@@ -36,8 +36,12 @@ CREATE TABLE "dispute_reasons" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "employee_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "password_hash" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'analyst',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -73,6 +77,7 @@ CREATE TABLE "activity_log" (
     "from_status" TEXT,
     "to_status" TEXT,
     "details" JSONB,
+    "attachments" JSONB,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "activity_log_pkey" PRIMARY KEY ("id")
@@ -101,7 +106,10 @@ CREATE UNIQUE INDEX "retailers_name_key" ON "retailers"("name");
 CREATE UNIQUE INDEX "dispute_reasons_code_key" ON "dispute_reasons"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_name_key" ON "users"("name");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_employee_id_key" ON "users"("employee_id");
 
 -- CreateIndex
 CREATE INDEX "deductions_company_id_idx" ON "deductions"("company_id");
