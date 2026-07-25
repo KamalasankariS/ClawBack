@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { LayoutDashboard, FileText, ClipboardList, Building2, LogOut } from 'lucide-react'
 import { api, getStoredUser, logout } from '../../api/client'

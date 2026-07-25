@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, ReactNode } from 'react'
+import { useEffect, useState, useRef, type ReactNode } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { formatCurrency, formatDate, timeAgo } from '../lib/utils'
