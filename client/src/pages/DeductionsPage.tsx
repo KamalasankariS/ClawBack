@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { STATUS_CONFIG } from '../lib/constants'
-import { Search, ChevronLeft, ChevronRight, ChevronDown, Plus, Upload, X, AlertCircle, CheckCircle } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Plus, Upload, Download, X, AlertCircle, CheckCircle } from 'lucide-react'
 import { SelectWithAdd } from '../components/SelectWithAdd'
 
 interface Deduction {
@@ -40,6 +40,21 @@ export function DeductionsPage() {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false)
   const [retailerFilter, setRetailerFilter] = useState(searchParams.get('retailerId') || '')
   const [companyFilter, setCompanyFilter] = useState(searchParams.get('companyId') || '')
+
+  const [dateFrom, setDateFrom] = useState(searchParams.get('dateFrom') || '')
+  const [dateTo, setDateTo] = useState(searchParams.get('dateTo') || '')
+
+  // Sort state
+  const [sortField, setSortField] = useState('deductedAt')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+
+  // Bulk selection
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [showBulkModal, setShowBulkModal] = useState(false)
+  const [bulkAction, setBulkAction] = useState<'accept' | 'dispute' | 'park' | 'close'>('accept')
+  const [bulkNotes, setBulkNotes] = useState('')
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [bulkResult, setBulkResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
   const [retailers, setRetailers] = useState<Retailer[]>([])
   const [companies, setCompanies] = useState<Company[]>([])
@@ -85,7 +100,7 @@ export function DeductionsPage() {
 
   useEffect(() => { loadRefs() }, [])
 
-  useEffect(() => {
+  const buildFilterParams = () => {
     const globalCompanyId = (window as any).__companyId
     const params = new URLSearchParams()
     if (companyFilter) params.set('companyId', companyFilter)
@@ -93,12 +108,22 @@ export function DeductionsPage() {
     if (statusFilter.length > 0) params.set('status', statusFilter.join(','))
     if (retailerFilter) params.set('retailerId', retailerFilter)
     if (search) params.set('search', search)
+    if (dateFrom) params.set('dateFrom', dateFrom)
+    if (dateTo) params.set('dateTo', dateTo)
+    params.set('sort', `${sortField}:${sortDir}`)
+    return params
+  }
+
+  useEffect(() => {
+    const params = buildFilterParams()
     params.set('page', String(page))
     params.set('limit', '25')
-    params.set('sort', 'deductedAt:desc')
 
-    api<ListResponse>(`/deductions?${params}`).then(setResponse)
-  }, [companyFilter, statusFilter.join(','), retailerFilter, search, page, refreshKey])
+    api<ListResponse>(`/deductions?${params}`).then((r) => {
+      setResponse(r)
+      setSelected(new Set())
+    })
+  }, [companyFilter, statusFilter.join(','), retailerFilter, search, dateFrom, dateTo, sortField, sortDir, page, refreshKey])
 
   const totalPages = response ? Math.ceil(response.total / response.limit) : 0
 
@@ -112,6 +137,84 @@ export function DeductionsPage() {
     setNewCompanyId(''); setNewRetailerId(''); setNewReasonId('')
     setNewInvoice(''); setNewAmount(''); setNewDate(''); setNewNotes('')
     setFormError(''); setDuplicateWarning([]); setDupChecked(false)
+  }
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDir('desc')
+    }
+    setPage(1)
+  }
+
+  const SortIcon = ({ field }: { field: string }) => {
+    if (sortField !== field) return <ChevronDown size={10} className="text-gray-300 ml-0.5" />
+    return sortDir === 'asc'
+      ? <ChevronUp size={10} className="text-gray-900 ml-0.5" />
+      : <ChevronDown size={10} className="text-gray-900 ml-0.5" />
+  }
+
+  const handleExport = async () => {
+    const params = buildFilterParams()
+    const token = localStorage.getItem('confido_token')
+    const res = await fetch(`/api/deductions/export?${params}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    if (!res.ok) {
+      alert('Export failed. Please try again.')
+      return
+    }
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `deductions-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const toggleSelectAll = () => {
+    if (!response) return
+    const allIds = response.data.map(d => d.id)
+    if (selected.size === allIds.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(allIds))
+    }
+  }
+
+  const toggleSelect = (id: number) => {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const handleBulkAction = async () => {
+    setBulkLoading(true)
+    setBulkResult(null)
+    try {
+      const result = await api<{ message: string }>('/deductions/bulk', {
+        method: 'POST',
+        body: JSON.stringify({
+          ids: Array.from(selected),
+          action: bulkAction,
+          notes: bulkNotes,
+        }),
+      })
+      setBulkResult({ type: 'success', message: result.message })
+      setSelected(new Set())
+      setRefreshKey(k => k + 1)
+      setTimeout(() => { setShowBulkModal(false); setBulkResult(null); setBulkNotes('') }, 1500)
+    } catch (e: any) {
+      setBulkResult({ type: 'error', message: e.message })
+    } finally {
+      setBulkLoading(false)
+    }
   }
 
   const submitDeduction = async () => {
@@ -265,6 +368,12 @@ export function DeductionsPage() {
         <h2 className="text-xl font-semibold text-gray-900">Deductions</h2>
         <div className="flex gap-2">
           <button
+            onClick={handleExport}
+            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
+          >
+            <Download size={14} /> Export CSV
+          </button>
+          <button
             onClick={() => setShowUpload(true)}
             className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
           >
@@ -353,21 +462,78 @@ export function DeductionsPage() {
             <option key={r.id} value={r.id}>{r.name}</option>
           ))}
         </select>
+        <input
+          type="date"
+          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          value={dateFrom}
+          onChange={(e) => { setDateFrom(e.target.value); setPage(1) }}
+          title="From date"
+        />
+        <span className="text-gray-400 self-center text-xs">to</span>
+        <input
+          type="date"
+          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          value={dateTo}
+          onChange={(e) => { setDateTo(e.target.value); setPage(1) }}
+          title="To date"
+        />
       </div>
+
+      {/* Bulk Action Bar */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 mb-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5">
+          <span className="text-sm font-medium text-blue-800">{selected.size} selected</span>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="text-xs text-blue-600 hover:underline"
+          >
+            Clear
+          </button>
+          <div className="ml-auto flex gap-2">
+            {['accept', 'dispute', 'park', 'close'].map((a) => (
+              <button
+                key={a}
+                onClick={() => { setBulkAction(a as any); setBulkNotes(''); setBulkResult(null); setShowBulkModal(true) }}
+                className="px-3 py-1.5 text-xs font-medium border border-blue-300 rounded-md bg-white text-blue-700 hover:bg-blue-100 capitalize"
+              >
+                {a === 'park' ? 'Put On Hold' : a}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">ID</th>
+              <th className="px-3 py-2.5 w-8">
+                <input
+                  type="checkbox"
+                  checked={response ? selected.size === response.data.length && response.data.length > 0 : false}
+                  onChange={toggleSelectAll}
+                  className="rounded border-gray-300"
+                />
+              </th>
+              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('id')}>
+                <span className="flex items-center">ID <SortIcon field="id" /></span>
+              </th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-600">Company</th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-600">Retailer</th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-600">Reason</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Invoice</th>
-              <th className="text-right px-4 py-2.5 font-medium text-gray-600">Amount</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Date</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Status</th>
+              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('invoiceNumber')}>
+                <span className="flex items-center">Invoice <SortIcon field="invoiceNumber" /></span>
+              </th>
+              <th className="text-right px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('amount')}>
+                <span className="flex items-center justify-end">Amount <SortIcon field="amount" /></span>
+              </th>
+              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('deductedAt')}>
+                <span className="flex items-center">Date <SortIcon field="deductedAt" /></span>
+              </th>
+              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('status')}>
+                <span className="flex items-center">Status <SortIcon field="status" /></span>
+              </th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-600">Handled By</th>
             </tr>
           </thead>
@@ -377,22 +543,29 @@ export function DeductionsPage() {
               return (
                 <tr
                   key={d.id}
-                  onClick={() => navigate(`/deductions/${d.id}`)}
-                  className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${selected.has(d.id) ? 'bg-blue-50/50' : ''}`}
                 >
-                  <td className="px-4 py-2.5 text-gray-500">#{d.id}</td>
-                  <td className="px-4 py-2.5">{d.company?.name || <span className="text-gray-400">Unknown</span>}</td>
-                  <td className="px-4 py-2.5">{d.retailer?.name || <span className="text-gray-400">—</span>}</td>
-                  <td className="px-4 py-2.5">{d.reason?.label || <span className="text-gray-400">—</span>}</td>
-                  <td className="px-4 py-2.5 font-mono text-xs">{d.invoiceNumber || '—'}</td>
-                  <td className="px-4 py-2.5 text-right font-mono">{formatCurrency(d.amount)}</td>
-                  <td className="px-4 py-2.5 text-gray-500">{formatDate(d.deductedAt)}</td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selected.has(d.id)}
+                      onChange={() => toggleSelect(d.id)}
+                      className="rounded border-gray-300"
+                    />
+                  </td>
+                  <td className="px-4 py-2.5 text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>#{d.id}</td>
+                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.company?.name || <span className="text-gray-400">Unknown</span>}</td>
+                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.retailer?.name || <span className="text-gray-400">—</span>}</td>
+                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.reason?.label || <span className="text-gray-400">—</span>}</td>
+                  <td className="px-4 py-2.5 font-mono text-xs" onClick={() => navigate(`/deductions/${d.id}`)}>{d.invoiceNumber || '—'}</td>
+                  <td className="px-4 py-2.5 text-right font-mono" onClick={() => navigate(`/deductions/${d.id}`)}>{formatCurrency(d.amount)}</td>
+                  <td className="px-4 py-2.5 text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>{formatDate(d.deductedAt)}</td>
+                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${sc.bg} ${sc.color}`}>
                       {sc.label}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-gray-500">
+                  <td className="px-4 py-2.5 text-xs text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>
                     {d.handledBy && d.handledBy.length > 0
                       ? d.handledBy.map(u => u.name).join(', ')
                       : <span className="text-gray-300">—</span>
@@ -573,6 +746,58 @@ export function DeductionsPage() {
                 className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
               >
                 {formLoading ? 'Creating...' : duplicateWarning.length > 0 ? 'Create Anyway' : 'Create Deduction'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Bulk Action Modal ─── */}
+      {showBulkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowBulkModal(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+              <h3 className="text-base font-semibold text-gray-900 capitalize">
+                Bulk {bulkAction === 'park' ? 'Put On Hold' : bulkAction} — {selected.size} deduction{selected.size !== 1 ? 's' : ''}
+              </h3>
+              <button onClick={() => setShowBulkModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              {bulkResult && (
+                <div className={`flex items-center gap-2 text-sm rounded-md px-3 py-2 border ${
+                  bulkResult.type === 'success' ? 'text-green-700 bg-green-50 border-green-200' : 'text-red-600 bg-red-50 border-red-200'
+                }`}>
+                  {bulkResult.type === 'success' ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+                  {bulkResult.message}
+                </div>
+              )}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Notes *</label>
+                <textarea
+                  className={`w-full text-sm border rounded-md px-3 py-2 resize-none ${!bulkNotes.trim() ? 'border-red-300' : 'border-gray-200'}`}
+                  rows={3}
+                  value={bulkNotes}
+                  onChange={(e) => setBulkNotes(e.target.value)}
+                  placeholder="Explain why you are performing this action on all selected deductions..."
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={bulkLoading || !bulkNotes.trim()}
+                onClick={handleBulkAction}
+                className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 capitalize"
+              >
+                {bulkLoading ? 'Processing...' : `${bulkAction === 'park' ? 'Put On Hold' : bulkAction} ${selected.size} Deduction${selected.size !== 1 ? 's' : ''}`}
               </button>
             </div>
           </div>
