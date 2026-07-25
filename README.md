@@ -167,13 +167,22 @@ Every transformation is logged to the `import_audit` table with the deduction ID
 
 ## What I'd Improve With More Time
 
-- **Bulk actions** — Triage or close multiple deductions at once from the list view
-- **Export to CSV** — Download filtered results for reporting or sharing
+- ~~**Bulk actions** — Triage or close multiple deductions at once from the list view~~ **Done**
+- ~~**Export to CSV** — Download filtered results for reporting or sharing~~ **Done**
 - **Email/Slack alerts** — Notify when disputes hit aging thresholds (30, 60, 90 days)
 - **Trend charts** — Recovery rate over time, dispute volume by month
 - **Role-based access control** — Different permission levels (analyst, manager, admin) per company
 - **SSO/OAuth integration** — Enterprise single sign-on with Google Workspace, Okta, etc.
 - **Automated dispute suggestions** — Flag deductions where the reason is typically disputable and the amount exceeds a configurable threshold
+
+## Quality & Security
+
+- **100 automated tests** — Unit tests (data cleaners, workflow state machine) and integration tests (auth API, deductions CRUD, full workflow pipeline) via Vitest + Supertest
+- **CI/CD** — GitHub Actions pipeline with 4 jobs: server type check, client lint + type check, client build, server tests with PostgreSQL service container
+- **Security headers** — Helmet middleware for XSS protection, HSTS, content-type sniffing prevention
+- **Rate limiting** — 100 requests/minute general, 10 requests/minute on auth endpoints
+- **Error boundary** — Graceful fallback UI if a page crashes
+- **Responsive design** — Works on desktop, tablet, and mobile (collapsible sidebar, scrollable tables)
 
 ## Tech Stack
 
@@ -182,8 +191,11 @@ Every transformation is logged to the `import_audit` table with the deduction ID
 | **Backend** | Node.js, Express, TypeScript, Prisma ORM |
 | **Database** | PostgreSQL 16 (via Docker Compose) |
 | **Auth** | JWT (jsonwebtoken), bcryptjs |
+| **Security** | Helmet, express-rate-limit |
+| **Testing** | Vitest, Supertest (100 tests) |
+| **CI/CD** | GitHub Actions (4 jobs) |
 | **File Uploads** | Multer (10MB limit, stored locally) |
-| **Frontend** | React, TypeScript, Vite, Tailwind CSS |
+| **Frontend** | React, TypeScript, Vite, Tailwind CSS v4 |
 | **Charts** | Recharts |
 | **Icons** | Lucide React |
 
@@ -192,20 +204,26 @@ Every transformation is logged to the `import_audit` table with the deduction ID
 ```
 confido/
 ├── docker-compose.yml          # PostgreSQL container
-├── seed/                       # Raw JSON data files + seed script
+├── start.sh                    # One-command startup script
+├── .github/workflows/ci.yml   # GitHub Actions CI pipeline
+├── seed/                       # Raw JSON data files
 ├── server/
 │   ├── prisma/schema.prisma    # Database schema (7 tables)
+│   ├── vitest.config.ts        # Test configuration
 │   └── src/
-│       ├── index.ts            # Express entry point
+│       ├── app.ts              # Express app (extracted for testing)
+│       ├── index.ts             # Server entry point
 │       ├── lib/                # Prisma client, workflow state machine
-│       ├── middleware/         # JWT auth middleware
-│       ├── routes/             # API endpoints (auth, deductions, uploads, etc.)
+│       ├── middleware/         # JWT auth, error handler
+│       ├── routes/             # API endpoints (auth, deductions, dashboard, etc.)
+│       ├── __tests__/          # 100 automated tests
 │       ├── uploads/            # Uploaded supporting documents
 │       └── seed/               # Data cleaning modules
 └── client/
     └── src/
         ├── api/                # Typed fetch wrapper
-        ├── components/         # SelectWithAdd, AppShell
+        ├── components/         # Toast, ErrorBoundary, SelectWithAdd, AppShell
+        ├── hooks/              # useTitle
         ├── pages/              # Auth, Dashboard, Deductions, Detail, Data Cleanup Report
         └── lib/                # Utils, constants
 ```
