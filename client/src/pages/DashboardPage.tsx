@@ -106,7 +106,7 @@ export function DashboardPage() {
             <BarChart data={byRetailer.slice(0, 10)} layout="vertical" margin={{ left: 100 }}>
               <XAxis type="number" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <YAxis dataKey="retailerName" type="category" width={90} tick={{ fontSize: 12 }} />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <Tooltip formatter={(value) => formatCurrency(Number(value))} />
               <Bar dataKey="totalAmount" name="Total" fill="#6366f1" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -119,7 +119,7 @@ export function DashboardPage() {
             <BarChart data={aging}>
               <XAxis dataKey="label" tick={{ fontSize: 12 }} />
               <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <Tooltip formatter={(value) => formatCurrency(Number(value))} />
               <Bar dataKey="totalAmount" name="Amount" fill="#6366f1" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
