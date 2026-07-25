@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { useTitle } from '../hooks/useTitle'
 import { formatCurrency } from '../lib/utils'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { TrendingUp, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
@@ -36,6 +37,7 @@ interface AgingBucket {
 }
 
 export function DashboardPage() {
+  useTitle('Dashboard')
   const navigate = useNavigate()
   const [summary, setSummary] = useState<Summary | null>(null)
   const [byRetailer, setByRetailer] = useState<RetailerBreakdown[]>([])
