@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { STATUS_CONFIG } from '../lib/constants'
 import { Search, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Plus, Upload, Download, X, AlertCircle, CheckCircle } from 'lucide-react'
+import { toast } from '../components/Toast'
 import { SelectWithAdd } from '../components/SelectWithAdd'
 
 interface Deduction {
@@ -163,7 +164,7 @@ export function DeductionsPage() {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
     if (!res.ok) {
-      alert('Export failed. Please try again.')
+      toast('error', 'Export failed. Please try again.')
       return
     }
     const blob = await res.blob()
@@ -364,32 +365,32 @@ export function DeductionsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Deductions</h2>
         <div className="flex gap-2">
           <button
             onClick={handleExport}
             className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
           >
-            <Download size={14} /> Export CSV
+            <Download size={14} /> <span className="hidden sm:inline">Export CSV</span><span className="sm:hidden">Export</span>
           </button>
           <button
             onClick={() => setShowUpload(true)}
             className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
           >
-            <Upload size={14} /> Upload CSV
+            <Upload size={14} /> <span className="hidden sm:inline">Upload CSV</span><span className="sm:hidden">Upload</span>
           </button>
           <button
             onClick={() => { resetNewForm(); setShowNewForm(true) }}
             className="flex items-center gap-1.5 px-3 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800"
           >
-            <Plus size={14} /> New Deduction
+            <Plus size={14} /> <span className="hidden sm:inline">New Deduction</span><span className="sm:hidden">New</span>
           </button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -504,8 +505,8 @@ export function DeductionsPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+        <table className="w-full text-sm min-w-[900px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-3 py-2.5 w-8">
