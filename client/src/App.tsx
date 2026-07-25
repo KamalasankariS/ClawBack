@@ -7,6 +7,7 @@ import { DeductionDetailPage } from './pages/DeductionDetailPage'
 import { ImportAuditPage } from './pages/ImportAuditPage'
 import { AuthPage } from './pages/AuthPage'
 import { ToastContainer } from './components/Toast'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { getToken } from './api/client'
 
 export default function App() {
@@ -24,14 +25,16 @@ export default function App() {
   return (
     <>
       <AppShell>
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/deductions" element={<DeductionsPage />} />
-          <Route path="/deductions/:id" element={<DeductionDetailPage />} />
-          <Route path="/import-audit" element={<ImportAuditPage />} />
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/deductions" element={<DeductionsPage />} />
+            <Route path="/deductions/:id" element={<DeductionDetailPage />} />
+            <Route path="/import-audit" element={<ImportAuditPage />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ErrorBoundary>
       </AppShell>
       <ToastContainer />
     </>
