@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { formatCurrency, formatDate, timeAgo } from '../lib/utils'
 import { STATUS_CONFIG } from '../lib/constants'
 import { ArrowLeft, CheckCircle, AlertTriangle, PauseCircle, Send, Trophy, XCircle, Minus, Lock, MessageSquare, X, Pencil, Paperclip, FileText as FileIcon } from 'lucide-react'
+import { toast } from '../components/Toast'
 import { SelectWithAdd } from '../components/SelectWithAdd'
 
 interface Activity {
@@ -91,7 +92,7 @@ function ActionModal({
       const uploaded: AttachmentMeta[] = await res.json()
       setAttachments(prev => [...prev, ...uploaded])
     } catch {
-      alert('File upload failed')
+      toast('error', 'File upload failed. Please try again.')
     } finally {
       setUploading(false)
       if (fileRef.current) fileRef.current.value = ''
@@ -274,13 +275,33 @@ export function DeductionDetailPage() {
       setShowEdit(false)
       reload()
     } catch (e: any) {
-      alert(e.message)
+      toast('error', e.message)
     } finally {
       setEditLoading(false)
     }
   }
 
-  if (!deduction) return <div className="text-gray-500">Loading...</div>
+  if (!deduction) {
+    return (
+      <div>
+        <div className="h-5 w-36 skeleton mb-4" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-5">
+            <div className="h-8 w-40 skeleton mb-3" />
+            <div className="grid grid-cols-2 gap-4">
+              {[1,2,3,4,5,6].map(i => <div key={i} className="h-12 skeleton" />)}
+            </div>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-5">
+            <div className="h-5 w-20 skeleton mb-3" />
+            <div className="space-y-2">
+              {[1,2,3].map(i => <div key={i} className="h-10 skeleton" />)}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const sc = STATUS_CONFIG[deduction.status] || { label: deduction.status, color: 'text-gray-500', bg: 'bg-gray-50' }
 
@@ -291,7 +312,7 @@ export function DeductionDetailPage() {
       setModal(null)
       reload()
     } catch (e: any) {
-      alert(e.message)
+      toast('error', e.message)
     } finally {
       setLoading(false)
     }
@@ -384,9 +405,9 @@ export function DeductionDetailPage() {
         <ArrowLeft size={14} /> Back to Deductions
       </button>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Main Info */}
-        <div className="col-span-2 bg-white rounded-lg border border-gray-200 p-5">
+        <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-4 sm:p-5">
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
