@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id              Int         @id
+  name            String
+  slug            String      @unique
+  erpSystem       String?     @map("erp_system")
+  defaultCurrency String      @default("USD") @map("default_currency")
+  isActive        Boolean     @default(true) @map("is_active")
+  deductions      Deduction[]
+  createdAt       DateTime    @default(now()) @map("created_at")
+
+  @@map("companies")
+}
+
+model Retailer {
+  id         Int         @id
+  name       String      @unique
+  type       String
+  region     String
+  deductions Deduction[]
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  @@map("retailers")
+}
+
+model DisputeReason {
+  id                  Int         @id @default(autoincrement())
+  code                String      @unique
+  label               String
+  category            String
+  typicallyDisputable Boolean     @default(false) @map("typically_disputable")
+  deductions          Deduction[]
+
+  @@map("dispute_reasons")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  employeeId   String        @unique @map("employee_id")
+  name         String
+  passwordHash String        @map("password_hash")
+  role         String        @default("analyst")
+  activities   ActivityLog[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Deduction {
+  id              Int            @id
+  companyId       Int?           @map("company_id")
+  company         Company?       @relation(fields: [companyId], references: [id])
+  retailerId      Int?           @map("retailer_id")
+  retailer        Retailer?      @relation(fields: [retailerId], references: [id])
+  reasonId        Int?           @map("reason_id")
+  reason          DisputeReason? @relation(fields: [reasonId], references: [id])
+  invoiceNumber   String?        @map("invoice_number")
+  amount          Decimal        @db.Decimal(12, 2)
+  deductedAt      DateTime?      @map("deducted_at")
+  status          String         @default("open")
+  isDeleted       Boolean        @default(false) @map("is_deleted")
+  notes           String?
+  rawData         Json?          @map("raw_data")
+  recoveredAmount Decimal?       @db.Decimal(12, 2) @map("recovered_amount")
+  resolutionType  String?        @map("resolution_type")
+  resolutionNotes String?        @map("resolution_notes")
+  activities      ActivityLog[]
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@index([companyId])
+  @@index([retailerId])
+  @@index([status])
+  @@index([isDeleted])
+  @@map("deductions")
+}
+
+model ActivityLog {
+  id          Int       @id @default(autoincrement())
+  deductionId Int       @map("deduction_id")
+  deduction   Deduction @relation(fields: [deductionId], references: [id])
+  userId      Int       @map("user_id")
+  user        User      @relation(fields: [userId], references: [id])
+  action      String
+  fromStatus  String?   @map("from_status")
+  toStatus    String?   @map("to_status")
+  details     Json?
+  attachments Json?     // Array of { filename, originalName, size }
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([deductionId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("activity_log")
+}
+
+model ImportAudit {
+  id           Int      @id @default(autoincrement())
+  deductionId  Int      @map("deduction_id")
+  field        String
+  rawValue     String?  @map("raw_value")
+  cleanedValue String?  @map("cleaned_value")
+  rule         String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([deductionId])
+  @@map("import_audit")
+}
