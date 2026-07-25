@@ -1,0 +1,6 @@
+company_id,retailer_id,reason_id,invoice_number,amount,deducted_at,notes
+1,14,1,INV-90001,245.50,2026-07-20,Test shortage from Kroger
+2,16,2,INV-90002,89.99,2026-07-18,Pricing dispute with Walmart
+1,15,9,INV-90003,150.00,2026-07-15,Target promo allowance
+4,10,3,inv-90004,312.75,2026-07-10,KeHE freight charge
+2,11,6,INV-90005,67.20,2026-07-22,UNFI spoilage claim
