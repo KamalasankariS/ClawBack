@@ -37,7 +37,7 @@ const FIELD_COLORS: Record<string, string> = {
   company_id: 'bg-red-50 text-red-700 border-red-200',
 }
 
-function describeChange(field: string, rule: string, rawValue: string | null, cleanedValue: string | null): string {
+function describeChange(_field: string, rule: string, rawValue: string | null, cleanedValue: string | null): string {
   // Retailer
   if (rule === 'alias_matched') return `Matched variant "${rawValue}" to standard name "${cleanedValue}"`
   if (rule === 'unresolvable_retailer') return `Could not match "${rawValue}" to any known retailer`
