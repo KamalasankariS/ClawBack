@@ -40,6 +40,18 @@ router.get('/', async (req, res) => {
     ];
   }
 
+  // Date range filter
+  const { dateFrom, dateTo } = req.query as Record<string, string>;
+  if (dateFrom || dateTo) {
+    where.deductedAt = {};
+    if (dateFrom) where.deductedAt.gte = new Date(dateFrom);
+    if (dateTo) {
+      const end = new Date(dateTo);
+      end.setHours(23, 59, 59, 999);
+      where.deductedAt.lte = end;
+    }
+  }
+
   const [sortField, sortDir] = sort.split(':');
   const orderBy: Prisma.DeductionOrderByWithRelationInput = {
     [sortField!]: sortDir === 'asc' ? 'asc' : 'desc',
@@ -70,6 +82,138 @@ router.get('/', async (req, res) => {
   }));
 
   res.json({ data, total, page: parseInt(page), limit: parseInt(limit) });
+});
+
+// GET /api/deductions/export — download filtered deductions as CSV
+router.get('/export', async (req, res) => {
+  const {
+    companyId, status, retailerId, reasonId, search,
+    sort = 'deductedAt:desc', includeDeleted = 'false',
+    dateFrom, dateTo,
+  } = req.query as Record<string, string>;
+
+  const where: Prisma.DeductionWhereInput = {};
+  if (includeDeleted !== 'true') where.isDeleted = false;
+  if (companyId) where.companyId = parseInt(companyId);
+  if (status) where.status = { in: status.split(',') };
+  if (retailerId) where.retailerId = parseInt(retailerId);
+  if (reasonId) where.reasonId = parseInt(reasonId);
+  if (search) {
+    where.OR = [
+      { invoiceNumber: { contains: search, mode: 'insensitive' } },
+      { notes: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+  if (dateFrom || dateTo) {
+    where.deductedAt = {};
+    if (dateFrom) where.deductedAt.gte = new Date(dateFrom);
+    if (dateTo) {
+      const end = new Date(dateTo);
+      end.setHours(23, 59, 59, 999);
+      where.deductedAt.lte = end;
+    }
+  }
+
+  const [sortField, sortDir] = sort.split(':');
+  const orderBy: Prisma.DeductionOrderByWithRelationInput = {
+    [sortField!]: sortDir === 'asc' ? 'asc' : 'desc',
+  };
+
+  const deductions = await prisma.deduction.findMany({
+    where, orderBy,
+    include: { company: true, retailer: true, reason: true },
+  });
+
+  const header = 'ID,Company,Retailer,Reason,Invoice,Amount,Date,Status,Recovered,Resolution';
+  const rows = deductions.map(d => {
+    const escapeCsv = (v: string | null) => {
+      if (!v) return '';
+      return v.includes(',') || v.includes('"') ? `"${v.replace(/"/g, '""')}"` : v;
+    };
+    return [
+      d.id,
+      escapeCsv(d.company?.name ?? ''),
+      escapeCsv(d.retailer?.name ?? ''),
+      escapeCsv(d.reason?.label ?? ''),
+      d.invoiceNumber ?? '',
+      Number(d.amount).toFixed(2),
+      d.deductedAt ? d.deductedAt.toISOString().split('T')[0] : '',
+      d.status,
+      d.recoveredAmount ? Number(d.recoveredAmount).toFixed(2) : '',
+      d.resolutionType ?? '',
+    ].join(',');
+  });
+
+  const csv = [header, ...rows].join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename=deductions-${new Date().toISOString().split('T')[0]}.csv`);
+  res.send(csv);
+});
+
+// POST /api/deductions/bulk — bulk triage/close multiple deductions
+router.post('/bulk', async (req, res) => {
+  const userId = req.user!.userId;
+  const { ids, action, notes, attachments } = req.body as {
+    ids: number[];
+    action: 'accept' | 'dispute' | 'park' | 'close';
+    notes?: string;
+    attachments?: any[];
+  };
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'No deductions selected' });
+  }
+  if (!['accept', 'dispute', 'park', 'close'].includes(action)) {
+    return res.status(400).json({ error: 'Invalid bulk action' });
+  }
+  if (!notes?.trim()) {
+    return res.status(400).json({ error: 'Notes are required for bulk actions' });
+  }
+
+  const deductions = await prisma.deduction.findMany({
+    where: { id: { in: ids }, isDeleted: false },
+  });
+
+  const statusMap: Record<string, string> = {
+    accept: 'accepted', dispute: 'in_dispute', park: 'parked', close: 'closed',
+  };
+  const requiredFromStatus: Record<string, string[]> = {
+    accept: ['open'], dispute: ['open'], park: ['open'],
+    close: ['resolved_won', 'resolved_lost', 'resolved_partial'],
+  };
+  const newStatus = statusMap[action]!;
+  const validFrom = requiredFromStatus[action]!;
+
+  let updated = 0;
+  const skipped: number[] = [];
+
+  for (const d of deductions) {
+    if (!validFrom.includes(d.status)) {
+      skipped.push(d.id);
+      continue;
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.deduction.update({ where: { id: d.id }, data: { status: newStatus } });
+      await tx.activityLog.create({
+        data: {
+          deductionId: d.id, userId,
+          action: action === 'close' ? 'close' : `triage_${action}`,
+          fromStatus: d.status, toStatus: newStatus,
+          details: { notes: notes!.trim(), bulk: true },
+          attachments: attachments?.length ? attachments : undefined,
+        },
+      });
+    });
+    updated++;
+  }
+
+  res.json({
+    updated,
+    skipped: skipped.length,
+    skippedIds: skipped,
+    message: `${updated} deduction${updated !== 1 ? 's' : ''} updated${skipped.length > 0 ? `, ${skipped.length} skipped (wrong status)` : ''}`,
+  });
 });
 
 // GET /api/deductions/:id — single deduction with activities
