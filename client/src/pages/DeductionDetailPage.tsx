@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, type ReactNode } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { formatCurrency, formatDate, timeAgo } from '../lib/utils'
+import { useTitle } from '../hooks/useTitle'
 import { STATUS_CONFIG } from '../lib/constants'
 import { ArrowLeft, CheckCircle, AlertTriangle, PauseCircle, Send, Trophy, XCircle, Minus, Lock, MessageSquare, X, Pencil, Paperclip, FileText as FileIcon } from 'lucide-react'
 import { toast } from '../components/Toast'
@@ -206,6 +207,7 @@ export function DeductionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [deduction, setDeduction] = useState<Deduction | null>(null)
+  useTitle(deduction ? `Deduction #${deduction.id}` : 'Loading...')
   const [loading, setLoading] = useState(false)
   const [noteText, setNoteText] = useState('')
 
