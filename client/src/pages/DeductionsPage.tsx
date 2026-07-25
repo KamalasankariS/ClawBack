@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { STATUS_CONFIG } from '../lib/constants'
 import { Search, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Plus, Upload, Download, X, AlertCircle, CheckCircle } from 'lucide-react'
 import { toast } from '../components/Toast'
+import { useTitle } from '../hooks/useTitle'
 import { SelectWithAdd } from '../components/SelectWithAdd'
 
 interface Deduction {
@@ -33,10 +34,21 @@ interface Retailer { id: number; name: string }
 interface Reason { id: number; code: string; label: string }
 
 export function DeductionsPage() {
+  useTitle('Deductions')
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [response, setResponse] = useState<ListResponse | null>(null)
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '')
   const [search, setSearch] = useState(searchParams.get('search') || '')
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const debouncedSearch = useCallback((value: string) => {
+    if (searchTimer.current) clearTimeout(searchTimer.current)
+    searchTimer.current = setTimeout(() => {
+      setSearch(value)
+      setPage(1)
+    }, 300)
+  }, [])
   const [statusFilter, setStatusFilter] = useState<string[]>(searchParams.get('status')?.split(',').filter(Boolean) || [])
   const [showStatusDropdown, setShowStatusDropdown] = useState(false)
   const [retailerFilter, setRetailerFilter] = useState(searchParams.get('retailerId') || '')
@@ -397,8 +409,8 @@ export function DeductionsPage() {
             type="text"
             placeholder="Search by invoice number..."
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md bg-white"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+            value={searchInput}
+            onChange={(e) => { setSearchInput(e.target.value); debouncedSearch(e.target.value) }}
           />
         </div>
         <select
@@ -577,6 +589,19 @@ export function DeductionsPage() {
             })}
           </tbody>
         </table>
+
+        {/* Empty State */}
+        {response && response.data.length === 0 && (
+          <div className="py-12 text-center">
+            <Search size={32} className="mx-auto text-gray-300 mb-3" />
+            <h3 className="text-sm font-medium text-gray-700 mb-1">No deductions found</h3>
+            <p className="text-xs text-gray-500">
+              {search || statusFilter.length > 0 || retailerFilter || dateFrom || dateTo
+                ? 'Try adjusting your filters or search terms.'
+                : 'Create a new deduction or upload a CSV to get started.'}
+            </p>
+          </div>
+        )}
 
         {/* Pagination */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
