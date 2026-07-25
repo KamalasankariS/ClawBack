@@ -8,7 +8,25 @@ An internal tool for tracking, triaging, and recovering retailer deductions acro
 - Node.js 18+
 - Docker (for PostgreSQL)
 
-### Setup
+### Quick Start (one command)
+
+```bash
+git clone https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project.git
+cd Confido-Deduction-Recovery-Project
+./start.sh
+```
+
+This single script handles everything:
+- Checks that Node.js and Docker are installed
+- Starts PostgreSQL via Docker Compose
+- Installs all dependencies (server + client)
+- Runs database migrations
+- Seeds 1,000+ deductions (first run only)
+- Starts both server and client
+
+Open **http://localhost:5173** when you see "Confido is running!" Press `Ctrl+C` to stop.
+
+### Manual Setup (if you prefer)
 
 ```bash
 # 1. Start PostgreSQL
@@ -17,21 +35,19 @@ docker compose up -d
 # 2. Install server dependencies & run migrations
 cd server
 npm install
-npx prisma migrate dev
+npx prisma migrate deploy
 
-# 3. Seed the database (cleans and imports 1,005 deductions)
+# 3. Seed the database (first time only)
 npx tsx src/seed/seed.ts
 
 # 4. Start the API server (port 3001)
 npm run dev
 
 # 5. In a new terminal — install and start the frontend (port 5173)
-cd client
+cd ../client
 npm install
 npm run dev
 ```
-
-Open **http://localhost:5173** in your browser.
 
 ### First-Time Setup for Analysts
 
