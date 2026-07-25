@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import authRouter from './routes/auth.js';
 import companiesRouter from './routes/companies.js';
 import retailersRouter from './routes/retailers.js';
@@ -14,8 +16,31 @@ import { errorHandler } from './middleware/error-handler.js';
 
 const app = express();
 
+// Security headers
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+
+// Rate limiting (disabled during tests)
+if (process.env.NODE_ENV !== 'test') {
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+  });
+  app.use('/api/', limiter);
+
+  const authLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 10,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Too many login attempts, please try again later.' },
+  });
+  app.use('/api/auth', authLimiter);
+}
 
 // Public routes (no auth required)
 app.use('/api/auth', authRouter);
