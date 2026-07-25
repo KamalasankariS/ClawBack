@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { ChevronLeft, ChevronRight, ArrowRight, Search, FileWarning, ShieldCheck } from 'lucide-react'
+import { useTitle } from '../hooks/useTitle'
 
 interface AuditEntry {
   id: number
@@ -78,6 +79,7 @@ function describeChange(_field: string, rule: string, rawValue: string | null, c
 }
 
 export function ImportAuditPage() {
+  useTitle('Data Cleanup Report')
   const navigate = useNavigate()
   const [response, setResponse] = useState<ListResponse | null>(null)
   const [page, setPage] = useState(1)
