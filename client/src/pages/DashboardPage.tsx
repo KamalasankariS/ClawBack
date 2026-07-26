@@ -191,8 +191,8 @@ export function DashboardPage() {
                 <Tooltip
                   contentStyle={tooltipStyle}
                   labelStyle={{ color: 'var(--c-subtle)' }}
-                  formatter={(value: number, name: string) => [
-                    formatCurrency(value),
+                  formatter={(value, name) => [
+                    formatCurrency(Number(value)),
                     name === 'disputedAmount' ? 'Disputed' : 'Recovered',
                   ]}
                 />
@@ -212,7 +212,7 @@ export function DashboardPage() {
                 <Tooltip
                   contentStyle={tooltipStyle}
                   labelStyle={{ color: 'var(--c-subtle)' }}
-                  formatter={(value: number) => [`${value}%`, 'Recovery Rate']}
+                  formatter={(value) => [`${value}%`, 'Recovery Rate']}
                 />
                 <Line type="monotone" dataKey="recoveryRate" stroke="var(--c-accent)" strokeWidth={2} dot={{ fill: 'var(--c-accent)', r: 3 }} />
               </LineChart>
