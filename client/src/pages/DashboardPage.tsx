@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useTitle } from '../hooks/useTitle'
 import { formatCurrency } from '../lib/utils'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell } from 'recharts'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, LabelList } from 'recharts'
 import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
 
 interface Summary {
@@ -272,54 +272,74 @@ export function DashboardPage() {
         <div className="bg-panel rounded-lg border border-edge p-4">
           <h3 className="text-sm font-medium text-prose mb-3">Aging of Active Disputes</h3>
           {(() => {
-            // Urgency colors: green → yellow → orange → red
             const agingColors = ['#4a7c59', '#e8b630', '#e8913a', '#d94545']
+            const agingLabels = ['Fresh', 'Stale', 'Aging', 'Critical']
             return (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={aging}
-                  onMouseMove={(state) => {
-                    if (state?.activeTooltipIndex != null) setActiveAgingIdx(Number(state.activeTooltipIndex))
-                  }}
-                  onMouseLeave={() => setActiveAgingIdx(null)}
-                >
-                  <XAxis dataKey="label" tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
-                  <YAxis
-                    scale="log"
-                    domain={[1, 'auto']}
-                    allowDataOverflow
-                    tickFormatter={(v) => {
-                      if (v >= 1_000_000_000) return `$${(v / 1_000_000_000).toFixed(1)}B`
-                      if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(0)}M`
-                      if (v >= 1_000) return `$${(v / 1000).toFixed(0)}k`
-                      return `$${v}`
+              <>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={aging}
+                    margin={{ top: 25 }}
+                    onMouseMove={(state) => {
+                      if (state?.activeTooltipIndex != null) setActiveAgingIdx(Number(state.activeTooltipIndex))
                     }}
-                    tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
-                  />
-                  <Tooltip
-                    cursor={{ fill: 'transparent' }}
-                    contentStyle={tooltipStyle}
-                    labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600 }}
-                    formatter={(value) => [formatCurrency(Number(value)), 'Amount']}
-                  />
-                  <Bar dataKey="totalAmount" name="Amount" radius={[4, 4, 0, 0]}>
-                    {aging.map((_, idx) => (
-                      <Cell
-                        key={idx}
-                        fill={agingColors[idx] ?? agingColors[3]}
-                        opacity={activeAgingIdx === null || activeAgingIdx === idx ? 1 : 0.2}
+                    onMouseLeave={() => setActiveAgingIdx(null)}
+                  >
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
+                      label={{ value: 'Days Since Deduction', position: 'insideBottom', offset: -2, fill: 'var(--c-subtle)', fontSize: 11 }}
+                    />
+                    <YAxis
+                      scale="log"
+                      domain={[1, 'auto']}
+                      allowDataOverflow
+                      tickFormatter={(v) => {
+                        if (v >= 1_000_000_000) return `$${(v / 1_000_000_000).toFixed(1)}B`
+                        if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(0)}M`
+                        if (v >= 1_000) return `$${(v / 1000).toFixed(0)}k`
+                        return `$${v}`
+                      }}
+                      tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
+                      label={{ value: 'Total Amount', angle: -90, position: 'insideLeft', offset: 10, fill: 'var(--c-subtle)', fontSize: 11 }}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'transparent' }}
+                      contentStyle={tooltipStyle}
+                      labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600 }}
+                      formatter={(value, _, props) => {
+                        const bucket = props.payload
+                        return [`${formatCurrency(Number(value))} (${bucket.count} deductions)`, 'Amount']
+                      }}
+                    />
+                    <Bar dataKey="totalAmount" name="Amount" radius={[4, 4, 0, 0]}>
+                      {aging.map((_, idx) => (
+                        <Cell
+                          key={idx}
+                          fill={agingColors[idx] ?? agingColors[3]}
+                          opacity={activeAgingIdx === null || activeAgingIdx === idx ? 1 : 0.2}
+                        />
+                      ))}
+                      <LabelList
+                        dataKey="count"
+                        position="top"
+                        formatter={(v) => `${v} cases`}
+                        style={{ fill: 'var(--c-heading)', fontSize: 11, fontWeight: 600 }}
                       />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="flex justify-center gap-4 mt-2 text-[11px]">
+                  {agingLabels.map((label, i) => (
+                    <div key={label} className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: agingColors[i] }} />
+                      <span className="text-subtle">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
             )
           })()}
-          <div className="flex justify-between mt-2 text-xs text-subtle px-4">
-            {aging.map((b) => (
-              <span key={b.label}>{b.count} deductions</span>
-            ))}
-          </div>
         </div>
       </div>
 
