@@ -273,7 +273,6 @@ export function DashboardPage() {
           <h3 className="text-sm font-medium text-prose mb-3">Aging of Active Disputes</h3>
           {(() => {
             const agingColors = ['#4a7c59', '#e8b630', '#e8913a', '#d94545']
-            const agingLabels = ['Fresh', 'Stale', 'Aging', 'Critical']
             return (
               <>
                 <ResponsiveContainer width="100%" height={300}>
@@ -287,8 +286,10 @@ export function DashboardPage() {
                   >
                     <XAxis
                       dataKey="label"
+                      tickFormatter={(v) => `${v} days`}
                       tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
-                      label={{ value: 'Days Since Deduction', position: 'insideBottom', offset: -2, fill: 'var(--c-subtle)', fontSize: 11 }}
+                      label={{ value: 'Days since deduction was created', position: 'insideBottom', offset: -5, fill: 'var(--c-faint)', fontSize: 10 }}
+                      height={50}
                     />
                     <YAxis
                       scale="log"
@@ -301,7 +302,6 @@ export function DashboardPage() {
                         return `$${v}`
                       }}
                       tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
-                      label={{ value: 'Total Amount', angle: -90, position: 'insideLeft', offset: 10, fill: 'var(--c-subtle)', fontSize: 11 }}
                     />
                     <Tooltip
                       cursor={{ fill: 'transparent' }}
@@ -330,7 +330,7 @@ export function DashboardPage() {
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="flex justify-center gap-4 mt-2 text-[11px]">
-                  {agingLabels.map((label, i) => (
+                  {['Recent', 'Needs Review', 'Overdue', 'At Risk'].map((label, i) => (
                     <div key={label} className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: agingColors[i] }} />
                       <span className="text-subtle">{label}</span>
