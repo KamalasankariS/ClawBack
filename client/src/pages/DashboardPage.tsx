@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useTitle } from '../hooks/useTitle'
 import { formatCurrency } from '../lib/utils'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import { TrendingUp, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell } from 'recharts'
+import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
 
 interface Summary {
   totalDeductions: number
@@ -19,16 +19,16 @@ interface Summary {
   acceptedAmount: number
   openCount: number
   parkedCount: number
+  trends: {
+    totalAmount: 'up' | 'down' | 'flat'
+    inDispute: 'up' | 'down' | 'flat'
+    recovered: 'up' | 'down' | 'flat'
+  }
 }
 
-interface RetailerBreakdown {
-  retailerId: number
-  retailerName: string
-  totalAmount: number
-  disputedAmount: number
-  recoveredAmount: number
-  deductionCount: number
-  recoveryRate: number
+interface RetailerByCompanyResponse {
+  data: Record<string, unknown>[]
+  companies: string[]
 }
 
 interface AgingBucket {
@@ -46,6 +46,29 @@ interface TrendPoint {
   recoveryRate: number
 }
 
+// Fixed colors for the original 4 companies, then generated distinct colors for new ones
+const BASE_COMPANY_COLORS: Record<string, string> = {
+  'Cascade Snacks Co.': '#e8913a',   // orange
+  'Northfield Beverage': '#4a7c59',  // green
+  'Harbor & Vine Foods': '#d94545',  // red
+  'Sunbelt Organics': '#5b8abf',     // blue
+}
+
+// Generate a distinct hue-spaced color that avoids the 4 base hues (orange~30, green~140, red~0, blue~215)
+function generateColor(index: number): string {
+  const reservedHues = [30, 140, 0, 215]
+  const candidates = [280, 55, 175, 330, 100, 250, 15, 200]
+  const hue = candidates[index % candidates.length] ?? ((index * 137 + 60) % 360)
+  // Ensure distance from reserved hues
+  const tooClose = reservedHues.some(h => Math.min(Math.abs(hue - h), 360 - Math.abs(hue - h)) < 20)
+  const finalHue = tooClose ? (hue + 30) % 360 : hue
+  return `hsl(${finalHue}, 55%, 50%)`
+}
+
+function getCompanyColor(name: string, extraIndex: number): string {
+  return BASE_COMPANY_COLORS[name] ?? generateColor(extraIndex)
+}
+
 const tooltipStyle = {
   backgroundColor: 'var(--c-panel)',
   borderColor: 'var(--c-edge)',
@@ -57,15 +80,21 @@ export function DashboardPage() {
   useTitle('Dashboard')
   const navigate = useNavigate()
   const [summary, setSummary] = useState<Summary | null>(null)
-  const [byRetailer, setByRetailer] = useState<RetailerBreakdown[]>([])
+  const [retailerData, setRetailerData] = useState<Record<string, unknown>[]>([])
+  const [companyNames, setCompanyNames] = useState<string[]>([])
   const [aging, setAging] = useState<AgingBucket[]>([])
   const [trends, setTrends] = useState<TrendPoint[]>([])
+  const [activeRetailerIdx, setActiveRetailerIdx] = useState<number | null>(null)
+  const [activeAgingIdx, setActiveAgingIdx] = useState<number | null>(null)
 
   useEffect(() => {
     const companyId = (window as any).__companyId
     const qs = companyId ? `?companyId=${companyId}` : ''
     api<Summary>(`/dashboard/summary${qs}`).then(setSummary)
-    api<RetailerBreakdown[]>(`/dashboard/by-retailer${qs}`).then(setByRetailer)
+    api<RetailerByCompanyResponse>(`/dashboard/by-retailer${qs}`).then(r => {
+      setRetailerData(r.data)
+      setCompanyNames(r.companies)
+    })
     api<AgingBucket[]>(`/dashboard/aging${qs}`).then(setAging)
     api<TrendPoint[]>(`/dashboard/trends${qs}`).then(setTrends)
   }, [])
@@ -109,10 +138,19 @@ export function DashboardPage() {
     )
   }
 
+  const TrendIcon = ({ dir }: { dir: 'up' | 'down' | 'flat' }) => {
+    if (dir === 'up') return <TrendingUp size={12} className="text-green-600 dark:text-green-400" />
+    if (dir === 'down') return <TrendingDown size={12} className="text-red-500 dark:text-red-400" />
+    return <Minus size={12} className="text-subtle" />
+  }
+
+  const trendLabel = (dir: 'up' | 'down' | 'flat') =>
+    dir === 'up' ? 'Up vs prior 30d' : dir === 'down' ? 'Down vs prior 30d' : 'No change'
+
   const metrics = [
-    { label: 'Total Deductions', value: formatCurrency(summary.totalAmount), sub: `${summary.totalDeductions} deductions`, icon: DollarSign, color: 'text-heading', link: '/deductions' },
-    { label: 'In Dispute', value: formatCurrency(Math.abs(summary.inDisputeAmount)), sub: `${summary.inDisputeCount} active`, icon: AlertCircle, color: 'text-orange-600 dark:text-orange-400', link: '/deductions?status=in_dispute,dispute_filed' },
-    { label: 'Recovered', value: formatCurrency(summary.totalRecovered), sub: `${summary.resolvedCount} resolved`, icon: CheckCircle, color: 'text-green-600 dark:text-green-400', link: '/deductions?status=resolved_won,resolved_lost,resolved_partial' },
+    { label: 'Total Deductions', value: formatCurrency(summary.totalAmount), sub: `${summary.totalDeductions} deductions`, icon: DollarSign, color: 'text-heading', link: '/deductions', trend: summary.trends.totalAmount },
+    { label: 'In Dispute', value: formatCurrency(Math.abs(summary.inDisputeAmount)), sub: `${summary.inDisputeCount} active`, icon: AlertCircle, color: 'text-orange-600 dark:text-orange-400', link: '/deductions?status=in_dispute,dispute_filed', trend: summary.trends.inDispute },
+    { label: 'Recovered', value: formatCurrency(summary.totalRecovered), sub: `${summary.resolvedCount} resolved`, icon: CheckCircle, color: 'text-green-600 dark:text-green-400', link: '/deductions?status=resolved_won,resolved_lost,resolved_partial', trend: summary.trends.recovered },
   ]
 
   const pipeline = [
@@ -140,7 +178,14 @@ export function DashboardPage() {
               <m.icon size={16} className={m.color} />
             </div>
             <div className="text-lg sm:text-2xl font-bold text-heading">{m.value}</div>
-            <div className="text-[10px] sm:text-xs text-subtle mt-1">{m.sub}</div>
+            <div className="flex items-center gap-1 mt-1">
+              <span className="text-[10px] sm:text-xs text-subtle">{m.sub}</span>
+              {m.trend && (
+                <span className="flex items-center gap-0.5" title={trendLabel(m.trend)}>
+                  <TrendIcon dir={m.trend} />
+                </span>
+              )}
+            </div>
           </div>
         ))}
         {/* Recovery Rate — navigates to /recovery */}
@@ -161,27 +206,115 @@ export function DashboardPage() {
         {/* Recovery by Retailer */}
         <div className="bg-panel rounded-lg border border-edge p-4">
           <h3 className="text-sm font-medium text-prose mb-3">Deductions by Retailer</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={byRetailer.slice(0, 10)} layout="vertical" margin={{ left: 100 }}>
-              <XAxis type="number" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
-              <YAxis dataKey="retailerName" type="category" width={90} tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
-              <Tooltip formatter={(value) => formatCurrency(Number(value))} contentStyle={tooltipStyle} labelStyle={{ color: 'var(--c-subtle)' }} />
-              <Bar dataKey="totalAmount" name="Total" fill="var(--c-accent)" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {(() => {
+            const sliced = retailerData.slice(0, 14)
+            // Build color map once
+            let extraIdx = 0
+            const colorMap = companyNames.map((name) => ({
+              name,
+              color: getCompanyColor(name, BASE_COMPANY_COLORS[name] ? 0 : extraIdx++),
+            }))
+
+            return (
+              <ResponsiveContainer width="100%" height={Math.max(300, sliced.length * 36)}>
+                <BarChart
+                  data={sliced}
+                  layout="vertical"
+                  margin={{ left: 100, right: 10 }}
+                  onMouseMove={(state) => {
+                    if (state?.activeTooltipIndex != null) setActiveRetailerIdx(Number(state.activeTooltipIndex))
+                  }}
+                  onMouseLeave={() => setActiveRetailerIdx(null)}
+                >
+                  <XAxis
+                    type="number"
+                    scale="log"
+                    domain={[1, 'auto']}
+                    allowDataOverflow
+                    tickFormatter={(v) => {
+                      if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(0)}M`
+                      if (v >= 1_000) return `$${(v / 1000).toFixed(0)}k`
+                      return `$${v}`
+                    }}
+                    tick={{ fill: 'var(--c-subtle)', fontSize: 11 }}
+                  />
+                  <YAxis dataKey="retailerName" type="category" width={90} tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                  <Tooltip
+                    cursor={{ fill: 'transparent' }}
+                    contentStyle={tooltipStyle}
+                    labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600 }}
+                    formatter={(value, name) => {
+                      const amt = Number(value)
+                      if (amt === 0) return [null, null] as unknown as [string, string]
+                      return [formatCurrency(amt), String(name)]
+                    }}
+                    itemSorter={(item) => -(Number(item.value) || 0)}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 11, color: 'var(--c-subtle)' }} />
+                  {colorMap.map(({ name, color }) => (
+                    <Bar key={name} dataKey={name} stackId="company" fill={color}>
+                      {sliced.map((_, idx) => (
+                        <Cell
+                          key={idx}
+                          fill={color}
+                          opacity={activeRetailerIdx === null || activeRetailerIdx === idx ? 1 : 0.2}
+                        />
+                      ))}
+                    </Bar>
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            )
+          })()}
         </div>
 
         {/* Aging */}
         <div className="bg-panel rounded-lg border border-edge p-4">
           <h3 className="text-sm font-medium text-prose mb-3">Aging of Active Disputes</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={aging}>
-              <XAxis dataKey="label" tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
-              <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
-              <Tooltip formatter={(value) => formatCurrency(Number(value))} contentStyle={tooltipStyle} labelStyle={{ color: 'var(--c-subtle)' }} />
-              <Bar dataKey="totalAmount" name="Amount" fill="var(--c-accent)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {(() => {
+            // Urgency colors: green → yellow → orange → red
+            const agingColors = ['#4a7c59', '#e8b630', '#e8913a', '#d94545']
+            return (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={aging}
+                  onMouseMove={(state) => {
+                    if (state?.activeTooltipIndex != null) setActiveAgingIdx(Number(state.activeTooltipIndex))
+                  }}
+                  onMouseLeave={() => setActiveAgingIdx(null)}
+                >
+                  <XAxis dataKey="label" tick={{ fill: 'var(--c-subtle)', fontSize: 12 }} />
+                  <YAxis
+                    scale="log"
+                    domain={[1, 'auto']}
+                    allowDataOverflow
+                    tickFormatter={(v) => {
+                      if (v >= 1_000_000_000) return `$${(v / 1_000_000_000).toFixed(1)}B`
+                      if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(0)}M`
+                      if (v >= 1_000) return `$${(v / 1000).toFixed(0)}k`
+                      return `$${v}`
+                    }}
+                    tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'transparent' }}
+                    contentStyle={tooltipStyle}
+                    labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600 }}
+                    formatter={(value) => [formatCurrency(Number(value)), 'Amount']}
+                  />
+                  <Bar dataKey="totalAmount" name="Amount" radius={[4, 4, 0, 0]}>
+                    {aging.map((_, idx) => (
+                      <Cell
+                        key={idx}
+                        fill={agingColors[idx] ?? agingColors[3]}
+                        opacity={activeAgingIdx === null || activeAgingIdx === idx ? 1 : 0.2}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )
+          })()}
           <div className="flex justify-between mt-2 text-xs text-subtle px-4">
             {aging.map((b) => (
               <span key={b.label}>{b.count} deductions</span>

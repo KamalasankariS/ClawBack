@@ -178,11 +178,11 @@ async function main() {
     // Clean is_deleted
     const isDeleted = cleanDeleted(raw.is_deleted);
 
-    // Clean company_id
-    const rawCompanyId = raw.company_id;
+    // Clean company_id (handle string/number)
+    const rawCompanyId = raw.company_id != null ? Number(raw.company_id) : null;
     let companyId: number | null = null;
-    if (rawCompanyId != null && validCompanyIds.has(rawCompanyId as number)) {
-      companyId = rawCompanyId as number;
+    if (rawCompanyId != null && !isNaN(rawCompanyId) && validCompanyIds.has(rawCompanyId)) {
+      companyId = rawCompanyId;
     } else if (rawCompanyId != null) {
       importAudits.push({
         deductionId,

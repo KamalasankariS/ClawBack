@@ -52,6 +52,35 @@ router.get('/summary', async (req, res) => {
 
   const recoveryRate = resolvedPool > 0 ? (totalRecovered / resolvedPool) * 100 : 0;
 
+  // Period-over-period: last 30 days vs prior 30 days
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+  const recentWhere: Prisma.DeductionWhereInput = { ...where, createdAt: { gte: thirtyDaysAgo } };
+  const priorWhere: Prisma.DeductionWhereInput = { ...where, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } };
+
+  const [recentDeductions, priorDeductions] = await Promise.all([
+    prisma.deduction.findMany({ where: recentWhere, select: { amount: true, status: true, recoveredAmount: true } }),
+    prisma.deduction.findMany({ where: priorWhere, select: { amount: true, status: true, recoveredAmount: true } }),
+  ]);
+
+  const calcPeriod = (deds: typeof deductions) => {
+    let amt = 0, disputed = 0, recovered = 0;
+    for (const d of deds) {
+      amt += Number(d.amount);
+      if (disputeStatuses.includes(d.status)) disputed += Number(d.amount);
+      if (resolvedStatuses.includes(d.status)) recovered += Number(d.recoveredAmount ?? 0);
+    }
+    return { amount: amt, disputed, recovered, count: deds.length };
+  };
+
+  const recent = calcPeriod(recentDeductions);
+  const prior = calcPeriod(priorDeductions);
+
+  // Trend direction: 'up' | 'down' | 'flat'
+  const trend = (curr: number, prev: number) => curr > prev ? 'up' : curr < prev ? 'down' : 'flat';
+
   res.json({
     totalDeductions: deductions.length,
     totalAmount: Math.round(totalAmount * 100) / 100,
@@ -61,6 +90,11 @@ router.get('/summary', async (req, res) => {
     resolvedPool: Math.round(resolvedPool * 100) / 100,
     acceptedCount, acceptedAmount: Math.round(acceptedAmount * 100) / 100,
     openCount, parkedCount,
+    trends: {
+      totalAmount: trend(recent.amount, prior.amount),
+      inDispute: trend(recent.disputed, prior.disputed),
+      recovered: trend(recent.recovered, prior.recovered),
+    },
   });
 });
 
