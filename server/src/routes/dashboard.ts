@@ -151,4 +151,55 @@ router.get('/aging', async (req, res) => {
   res.json(buckets.map(b => ({ ...b, totalAmount: Math.round(b.totalAmount * 100) / 100 })));
 });
 
+// GET /api/dashboard/trends
+router.get('/trends', async (req, res) => {
+  const companyId = req.query.companyId ? parseInt(req.query.companyId as string) : undefined;
+
+  const where: Prisma.DeductionWhereInput = {
+    isDeleted: false,
+    deductedAt: { not: null },
+  };
+  if (companyId) where.companyId = companyId;
+
+  const deductions = await prisma.deduction.findMany({
+    where,
+    select: { deductedAt: true, amount: true, status: true, recoveredAmount: true },
+  });
+
+  const resolvedStatuses = ['resolved_won', 'resolved_lost', 'resolved_partial', 'closed'];
+  const disputeStatuses = ['in_dispute', 'dispute_filed', ...resolvedStatuses];
+
+  const months = new Map<string, { deductions: number; totalAmount: number; disputedAmount: number; recoveredAmount: number }>();
+
+  for (const d of deductions) {
+    if (!d.deductedAt) continue;
+    const key = `${d.deductedAt.getFullYear()}-${String(d.deductedAt.getMonth() + 1).padStart(2, '0')}`;
+    const entry = months.get(key) ?? { deductions: 0, totalAmount: 0, disputedAmount: 0, recoveredAmount: 0 };
+    entry.deductions++;
+    entry.totalAmount += Number(d.amount);
+    if (disputeStatuses.includes(d.status)) {
+      entry.disputedAmount += Number(d.amount);
+    }
+    if (resolvedStatuses.includes(d.status)) {
+      entry.recoveredAmount += Number(d.recoveredAmount ?? 0);
+    }
+    months.set(key, entry);
+  }
+
+  const result = Array.from(months.entries())
+    .map(([month, data]) => ({
+      month,
+      deductions: data.deductions,
+      totalAmount: Math.round(data.totalAmount * 100) / 100,
+      disputedAmount: Math.round(data.disputedAmount * 100) / 100,
+      recoveredAmount: Math.round(data.recoveredAmount * 100) / 100,
+      recoveryRate: data.disputedAmount > 0
+        ? Math.round((data.recoveredAmount / data.disputedAmount) * 1000) / 10
+        : 0,
+    }))
+    .sort((a, b) => a.month.localeCompare(b.month));
+
+  res.json(result);
+});
+
 export default router;

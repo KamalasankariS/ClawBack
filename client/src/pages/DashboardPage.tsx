@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useTitle } from '../hooks/useTitle'
 import { formatCurrency } from '../lib/utils'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { TrendingUp, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
 
 interface Summary {
@@ -36,6 +36,15 @@ interface AgingBucket {
   totalAmount: number
 }
 
+interface TrendPoint {
+  month: string
+  deductions: number
+  totalAmount: number
+  disputedAmount: number
+  recoveredAmount: number
+  recoveryRate: number
+}
+
 const tooltipStyle = {
   backgroundColor: 'var(--c-panel)',
   borderColor: 'var(--c-edge)',
@@ -49,6 +58,7 @@ export function DashboardPage() {
   const [summary, setSummary] = useState<Summary | null>(null)
   const [byRetailer, setByRetailer] = useState<RetailerBreakdown[]>([])
   const [aging, setAging] = useState<AgingBucket[]>([])
+  const [trends, setTrends] = useState<TrendPoint[]>([])
 
   useEffect(() => {
     const companyId = (window as any).__companyId
@@ -56,6 +66,7 @@ export function DashboardPage() {
     api<Summary>(`/dashboard/summary${qs}`).then(setSummary)
     api<RetailerBreakdown[]>(`/dashboard/by-retailer${qs}`).then(setByRetailer)
     api<AgingBucket[]>(`/dashboard/aging${qs}`).then(setAging)
+    api<TrendPoint[]>(`/dashboard/trends${qs}`).then(setTrends)
   }, [])
 
   if (!summary) {
@@ -166,6 +177,49 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Trend Charts */}
+      {trends.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="bg-panel rounded-lg border border-edge p-4">
+            <h3 className="text-sm font-medium text-prose mb-3">Monthly Dispute Volume</h3>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={trends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" />
+                <XAxis dataKey="month" tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: 'var(--c-subtle)' }}
+                  formatter={(value: number, name: string) => [
+                    formatCurrency(value),
+                    name === 'disputedAmount' ? 'Disputed' : 'Recovered',
+                  ]}
+                />
+                <Bar dataKey="disputedAmount" name="disputedAmount" fill="var(--c-accent)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="recoveredAmount" name="recoveredAmount" fill="#22c55e" radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-panel rounded-lg border border-edge p-4">
+            <h3 className="text-sm font-medium text-prose mb-3">Recovery Rate Over Time</h3>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={trends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" />
+                <XAxis dataKey="month" tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: 'var(--c-subtle)' }}
+                  formatter={(value: number) => [`${value}%`, 'Recovery Rate']}
+                />
+                <Line type="monotone" dataKey="recoveryRate" stroke="var(--c-accent)" strokeWidth={2} dot={{ fill: 'var(--c-accent)', r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* Pipeline Overview */}
       <div className="mt-4 bg-panel rounded-lg border border-edge p-4">
