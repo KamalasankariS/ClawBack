@@ -132,8 +132,9 @@ export function RecoveryPage() {
                 <div className="text-lg font-semibold text-heading">{summary.resolvedCount}</div>
               </div>
               <div>
-                <div className="text-xs text-subtle uppercase mb-1">Resolved Pool</div>
+                <div className="text-xs text-subtle uppercase mb-1">Total Disputed</div>
                 <div className="text-lg font-semibold text-heading">{formatCurrency(summary.resolvedPool)}</div>
+                <div className="text-[10px] text-faint mt-0.5">Only resolved cases, not all deductions</div>
               </div>
               <div>
                 <div className="text-xs text-subtle uppercase mb-1">Recovered</div>
