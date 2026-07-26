@@ -288,8 +288,6 @@ export function DashboardPage() {
                       dataKey="label"
                       tickFormatter={(v) => `${v} days`}
                       tick={{ fill: 'var(--c-subtle)', fontSize: 12 }}
-                      label={{ value: 'Days since deduction was created', position: 'insideBottom', offset: -5, fill: 'var(--c-faint)', fontSize: 10 }}
-                      height={50}
                     />
                     <YAxis
                       scale="log"
@@ -329,7 +327,8 @@ export function DashboardPage() {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
-                <div className="flex justify-center gap-4 mt-2 text-[11px]">
+                <p className="text-center text-[10px] text-faint mt-1">Days since deduction was created</p>
+                <div className="flex justify-center gap-4 mt-1 text-[11px]">
                   {['Recent', 'Needs Review', 'Overdue', 'At Risk'].map((label, i) => (
                     <div key={label} className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: agingColors[i] }} />
