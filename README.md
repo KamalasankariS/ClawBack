@@ -12,6 +12,8 @@ A tool that helps analysts track, dispute, and recover retailer deductions — r
 
 **You need:** [Node.js 18+](https://nodejs.org/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
+> **Windows users:** Open PowerShell as Administrator and run `wsl --install`, then restart your PC. Use the WSL terminal for all commands below.
+
 ### Option 1: One-word setup
 
 Add this alias to your `~/.zshrc` (or `~/.bash_profile`):
