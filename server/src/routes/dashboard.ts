@@ -46,11 +46,11 @@ router.get('/summary', async (req, res) => {
     }
   }
 
-  const disputePool = inDisputeAmount + deductions
+  const resolvedPool = deductions
     .filter(d => resolvedStatuses.includes(d.status))
     .reduce((sum, d) => sum + Number(d.amount), 0);
 
-  const recoveryRate = disputePool > 0 ? (totalRecovered / disputePool) * 100 : 0;
+  const recoveryRate = resolvedPool > 0 ? (totalRecovered / resolvedPool) * 100 : 0;
 
   res.json({
     totalDeductions: deductions.length,
