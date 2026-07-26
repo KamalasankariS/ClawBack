@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useTitle } from '../hooks/useTitle'
 import { formatCurrency } from '../lib/utils'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, LabelList } from 'recharts'
+import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, LabelList } from 'recharts'
 import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, DollarSign, ArrowRight } from 'lucide-react'
 
 interface Summary {
@@ -86,6 +86,7 @@ export function DashboardPage() {
   const [trends, setTrends] = useState<TrendPoint[]>([])
   const [activeRetailerIdx, setActiveRetailerIdx] = useState<number | null>(null)
   const [activeAgingIdx, setActiveAgingIdx] = useState<number | null>(null)
+  const [activeDisputeIdx, setActiveDisputeIdx] = useState<number | null>(null)
 
   useEffect(() => {
     const companyId = (window as any).__companyId
@@ -345,41 +346,85 @@ export function DashboardPage() {
       {/* Trend Charts */}
       {trends.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          {/* Graph 3: Monthly Dispute Volume */}
           <div className="bg-panel rounded-lg border border-edge p-4">
             <h3 className="text-sm font-medium text-prose mb-3">Monthly Dispute Volume</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" />
+              <BarChart
+                data={trends}
+                onMouseMove={(state) => {
+                  if (state?.activeTooltipIndex != null) setActiveDisputeIdx(Number(state.activeTooltipIndex))
+                }}
+                onMouseLeave={() => setActiveDisputeIdx(null)}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" vertical={false} />
                 <XAxis dataKey="month" tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
-                <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
+                <YAxis
+                  tickFormatter={(v) => {
+                    const abs = Math.abs(v)
+                    if (abs >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`
+                    if (abs >= 1_000) return `$${(v / 1000).toFixed(0)}k`
+                    return `$${v}`
+                  }}
+                  tick={{ fill: 'var(--c-subtle)', fontSize: 11 }}
+                />
                 <Tooltip
+                  cursor={{ fill: 'transparent' }}
                   contentStyle={tooltipStyle}
-                  labelStyle={{ color: 'var(--c-subtle)' }}
+                  labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600 }}
                   formatter={(value, name) => [
                     formatCurrency(Number(value)),
                     name === 'disputedAmount' ? 'Disputed' : 'Recovered',
                   ]}
                 />
-                <Bar dataKey="disputedAmount" name="disputedAmount" fill="var(--c-accent)" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="recoveredAmount" name="recoveredAmount" fill="#22c55e" radius={[3, 3, 0, 0]} />
+                <Legend wrapperStyle={{ fontSize: 11, color: 'var(--c-subtle)' }} formatter={(v) => v === 'disputedAmount' ? 'Disputed' : 'Recovered'} />
+                <Bar dataKey="disputedAmount" name="disputedAmount" radius={[3, 3, 0, 0]}>
+                  {trends.map((_, idx) => (
+                    <Cell key={idx} fill="#e8913a" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
+                  ))}
+                </Bar>
+                <Bar dataKey="recoveredAmount" name="recoveredAmount" radius={[3, 3, 0, 0]}>
+                  {trends.map((_, idx) => (
+                    <Cell key={idx} fill="#4a7c59" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
 
+          {/* Graph 4: Recovery Rate Over Time — area chart with crosshair tooltip */}
           <div className="bg-panel rounded-lg border border-edge p-4">
             <h3 className="text-sm font-medium text-prose mb-3">Recovery Rate Over Time</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" />
+              <AreaChart data={trends}>
+                <defs>
+                  <linearGradient id="rateGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--c-accent)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="var(--c-accent)" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--c-edge)" vertical={false} />
                 <XAxis dataKey="month" tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
                 <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} tick={{ fill: 'var(--c-subtle)', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={tooltipStyle}
-                  labelStyle={{ color: 'var(--c-subtle)' }}
-                  formatter={(value) => [`${value}%`, 'Recovery Rate']}
+                  cursor={{ stroke: 'var(--c-subtle)', strokeWidth: 1 }}
+                  contentStyle={{ ...tooltipStyle, padding: '8px 12px' }}
+                  labelStyle={{ color: 'var(--c-subtle)', fontWeight: 600, marginBottom: 4 }}
+                  formatter={(value, _, props) => {
+                    const point = props.payload
+                    return [`${value}%  ·  ${formatCurrency(point.recoveredAmount)} recovered`, '']
+                  }}
                 />
-                <Line type="monotone" dataKey="recoveryRate" stroke="var(--c-accent)" strokeWidth={2} dot={{ fill: 'var(--c-accent)', r: 3 }} />
-              </LineChart>
+                <Area
+                  type="monotone"
+                  dataKey="recoveryRate"
+                  stroke="var(--c-accent)"
+                  strokeWidth={2.5}
+                  fill="url(#rateGradient)"
+                  dot={{ fill: 'var(--c-panel)', stroke: 'var(--c-accent)', strokeWidth: 2, r: 4 }}
+                  activeDot={{ fill: 'var(--c-accent)', stroke: 'var(--c-panel)', strokeWidth: 2, r: 6 }}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
