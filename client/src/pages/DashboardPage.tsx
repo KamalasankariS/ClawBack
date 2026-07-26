@@ -14,6 +14,7 @@ interface Summary {
   resolvedCount: number
   totalRecovered: number
   recoveryRate: number
+  resolvedPool: number
   acceptedCount: number
   acceptedAmount: number
   openCount: number
@@ -112,7 +113,6 @@ export function DashboardPage() {
     { label: 'Total Deductions', value: formatCurrency(summary.totalAmount), sub: `${summary.totalDeductions} deductions`, icon: DollarSign, color: 'text-heading', link: '/deductions' },
     { label: 'In Dispute', value: formatCurrency(Math.abs(summary.inDisputeAmount)), sub: `${summary.inDisputeCount} active`, icon: AlertCircle, color: 'text-orange-600 dark:text-orange-400', link: '/deductions?status=in_dispute,dispute_filed' },
     { label: 'Recovered', value: formatCurrency(summary.totalRecovered), sub: `${summary.resolvedCount} resolved`, icon: CheckCircle, color: 'text-green-600 dark:text-green-400', link: '/deductions?status=resolved_won,resolved_lost,resolved_partial' },
-    { label: 'Recovery Rate', value: `${summary.recoveryRate}%`, sub: `${summary.openCount} still open`, icon: TrendingUp, color: 'text-accent-text', link: '/deductions?status=open' },
   ]
 
   const pipeline = [
@@ -143,6 +143,18 @@ export function DashboardPage() {
             <div className="text-[10px] sm:text-xs text-subtle mt-1">{m.sub}</div>
           </div>
         ))}
+        {/* Recovery Rate — navigates to /recovery */}
+        <div
+          onClick={() => navigate('/recovery')}
+          className="bg-panel rounded-lg border border-edge p-3 sm:p-4 cursor-pointer hover:border-accent/40 hover:shadow-sm transition-all"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] sm:text-xs font-medium text-subtle uppercase">Recovery Rate</span>
+            <TrendingUp size={16} className="text-accent-text" />
+          </div>
+          <div className="text-lg sm:text-2xl font-bold text-heading">{summary.recoveryRate}%</div>
+          <div className="text-[10px] sm:text-xs text-subtle mt-1">{summary.resolvedCount} resolved cases</div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

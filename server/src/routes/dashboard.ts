@@ -58,6 +58,7 @@ router.get('/summary', async (req, res) => {
     inDisputeCount, inDisputeAmount: Math.round(inDisputeAmount * 100) / 100,
     resolvedCount, totalRecovered: Math.round(totalRecovered * 100) / 100,
     recoveryRate: Math.round(recoveryRate * 10) / 10,
+    resolvedPool: Math.round(resolvedPool * 100) / 100,
     acceptedCount, acceptedAmount: Math.round(acceptedAmount * 100) / 100,
     openCount, parkedCount,
   });

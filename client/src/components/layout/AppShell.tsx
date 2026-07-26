@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, FileText, ClipboardList, Building2, LogOut, Menu, X, Sun, Moon } from 'lucide-react'
+import { LayoutDashboard, FileText, ClipboardList, Building2, LogOut, Menu, X, Sun, Moon, TrendingUp } from 'lucide-react'
 import { api, getStoredUser, logout } from '../../api/client'
 import { useTheme } from '../../hooks/useTheme'
 
@@ -9,6 +9,7 @@ interface Company { id: number; name: string }
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/deductions', icon: FileText, label: 'Deductions' },
+  { to: '/recovery', icon: TrendingUp, label: 'Recovery' },
   { to: '/import-audit', icon: ClipboardList, label: 'Data Cleanup' },
 ]
 

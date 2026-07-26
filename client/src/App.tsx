@@ -5,6 +5,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { DeductionsPage } from './pages/DeductionsPage'
 import { DeductionDetailPage } from './pages/DeductionDetailPage'
 import { ImportAuditPage } from './pages/ImportAuditPage'
+import { RecoveryPage } from './pages/RecoveryPage'
 import { AuthPage } from './pages/AuthPage'
 import { ToastContainer } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/deductions" element={<DeductionsPage />} />
             <Route path="/deductions/:id" element={<DeductionDetailPage />} />
+            <Route path="/recovery" element={<RecoveryPage />} />
             <Route path="/import-audit" element={<ImportAuditPage />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
