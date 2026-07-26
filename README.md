@@ -12,13 +12,29 @@ A tool that helps analysts track, dispute, and recover retailer deductions — r
 
 **You need:** [Node.js 18+](https://nodejs.org/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
+### Option 1: One-word setup
+
+Add this alias to your `~/.zshrc` (or `~/.bash_profile`):
+
+```bash
+alias confido='cd "/path/to/confido" && ./start.sh'
+```
+
+Then just type:
+
+```bash
+confido
+```
+
+### Option 2: Run from the project folder
+
 ```bash
 git clone https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project.git
 cd Confido-Deduction-Recovery-Project
 ./start.sh
 ```
 
-Open **http://localhost:5173** when you see "Confido is running!" — Press `Ctrl+C` to stop.
+The app opens automatically at **http://localhost:5173**. Press `Ctrl+C` to stop.
 
 On first launch, create your account with your name, employee ID, work email, and a password.
 
