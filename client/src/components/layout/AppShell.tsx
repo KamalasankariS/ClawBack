@@ -40,10 +40,10 @@ export function AppShell({ children }: { children: ReactNode }) {
     <>
       <div className="p-4 border-b border-edge">
         <div className="flex items-center justify-between">
-          <div>
+          <Link to="/" className="hover:opacity-80 transition-opacity">
             <h1 className="text-lg font-semibold text-heading">Confido</h1>
             <p className="text-xs text-subtle">Deduction Recovery</p>
-          </div>
+          </Link>
           <div className="flex items-center gap-1">
             <button
               onClick={toggle}
