@@ -79,7 +79,7 @@ function describeChange(_field: string, rule: string, rawValue: string | null, c
 }
 
 export function ImportAuditPage() {
-  useTitle('Data Cleanup Report')
+  useTitle('Tool Maintenance')
   const navigate = useNavigate()
   const [response, setResponse] = useState<ListResponse | null>(null)
   const [page, setPage] = useState(1)
@@ -108,29 +108,40 @@ export function ImportAuditPage() {
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-1">
           <ShieldCheck size={20} className="text-accent-text" />
-          <h2 className="text-xl font-semibold text-heading">Data Cleanup Report</h2>
+          <h2 className="text-xl font-semibold text-heading">Tool Maintenance</h2>
         </div>
         <p className="text-sm text-subtle">
-          When deductions were imported from the spreadsheet, the system automatically fixed formatting issues.
-          This report shows every correction so you can verify nothing was changed incorrectly.
+          Audit log of all automatic data corrections made during import.
+          Use this page to verify data integrity and track what the system cleaned up.
         </p>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-6 gap-3 mb-5">
+      {/* Summary line */}
+      {response && (
+        <div className="bg-accent/5 border border-accent/20 rounded-lg px-4 py-3 mb-5 flex items-center gap-3">
+          <ShieldCheck size={16} className="text-accent-text shrink-0" />
+          <span className="text-sm text-prose">
+            <span className="font-semibold text-heading">{response.total}</span> fields were auto-cleaned during import.
+            Filter by field type below to review specific corrections.
+          </span>
+        </div>
+      )}
+
+      {/* Field filter chips */}
+      <div className="flex flex-wrap gap-2 mb-5">
         {Object.entries(FIELD_LABELS).map(([field, label]) => {
           const count = fieldCounts[field] || 0
+          const isActive = fieldFilter === field
           const colors = FIELD_COLORS[field] || 'bg-panel-hover text-prose border-edge'
           return (
             <button
               key={field}
-              onClick={() => { setFieldFilter(fieldFilter === field ? '' : field); setPage(1) }}
-              className={`rounded-lg border px-3 py-2 text-left transition-all ${
-                fieldFilter === field ? colors + ' ring-2 ring-offset-1 ring-accent/40' : 'bg-panel border-edge hover:border-faint'
+              onClick={() => { setFieldFilter(isActive ? '' : field); setPage(1) }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                isActive ? colors + ' ring-2 ring-offset-1 ring-accent/40' : 'bg-panel border-edge hover:border-faint text-subtle'
               }`}
             >
-              <div className="text-lg font-bold">{count}</div>
-              <div className="text-xs font-medium">{label}</div>
+              {label} <span className="opacity-60">({count})</span>
             </button>
           )
         })}
@@ -163,13 +174,13 @@ export function ImportAuditPage() {
 
       {/* Table */}
       <div className="bg-panel rounded-lg border border-edge overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="bg-panel-hover border-b border-edge">
-              <th className="text-left px-4 py-2.5 font-medium text-subtle w-24">Deduction</th>
-              <th className="text-left px-4 py-2.5 font-medium text-subtle w-28">Field</th>
-              <th className="text-left px-4 py-2.5 font-medium text-subtle">What Changed</th>
-              <th className="text-left px-4 py-2.5 font-medium text-subtle w-72">Before → After</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle" style={{ width: '10%' }}>Deduction</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle" style={{ width: '14%' }}>Field</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle" style={{ width: '40%' }}>What Changed</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle" style={{ width: '36%' }}>Before → After</th>
             </tr>
           </thead>
           <tbody>
@@ -195,11 +206,11 @@ export function ImportAuditPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 text-xs font-mono">
-                      <span className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.rawValue || ''}>
+                      <span className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 px-1.5 py-0.5 rounded min-w-0 truncate" title={a.rawValue || ''}>
                         {a.rawValue || '(empty)'}
                       </span>
                       <ArrowRight size={12} className="text-faint flex-shrink-0" />
-                      <span className="text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.cleanedValue || ''}>
+                      <span className="text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-1.5 py-0.5 rounded min-w-0 truncate" title={a.cleanedValue || ''}>
                         {a.cleanedValue || '(cleared)'}
                       </span>
                     </div>

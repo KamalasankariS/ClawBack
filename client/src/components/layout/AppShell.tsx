@@ -10,7 +10,7 @@ const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/deductions', icon: FileText, label: 'Deductions' },
   { to: '/recovery', icon: TrendingUp, label: 'Recovery' },
-  { to: '/import-audit', icon: ClipboardList, label: 'Data Cleanup' },
+  { to: '/import-audit', icon: ClipboardList, label: 'Tool Maintenance' },
 ]
 
 export function AppShell({ children }: { children: ReactNode }) {
