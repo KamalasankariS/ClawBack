@@ -60,6 +60,7 @@ export function DeductionsPage() {
   // Sort state
   const [sortField, setSortField] = useState('deductedAt')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [showSortMenu, setShowSortMenu] = useState(false)
 
   // Bulk selection
   const [selected, setSelected] = useState<Set<number>>(new Set())
@@ -490,6 +491,40 @@ export function DeductionsPage() {
           onChange={(e) => { setDateTo(e.target.value); setPage(1) }}
           title="To date"
         />
+        <div className="relative">
+          <button
+            onClick={() => setShowSortMenu(!showSortMenu)}
+            className="flex items-center gap-1 px-3 py-2 text-sm text-subtle hover:text-heading border border-edge rounded-md bg-input-bg"
+          >
+            {sortField === 'deductedAt' && sortDir === 'desc' ? 'Newest First'
+              : sortField === 'deductedAt' && sortDir === 'asc' ? 'Oldest First'
+              : sortField === 'amount' && sortDir === 'desc' ? 'Amount: High → Low'
+              : sortField === 'amount' && sortDir === 'asc' ? 'Amount: Low → High'
+              : 'Sort'}
+            <ChevronDown size={12} className="text-faint" />
+          </button>
+          {showSortMenu && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowSortMenu(false)} />
+              <div className="absolute right-0 top-full mt-1 bg-panel border border-edge rounded-lg shadow-lg z-20 py-1 min-w-[180px]">
+                {[
+                  { label: 'Newest First', field: 'deductedAt', dir: 'desc' as const },
+                  { label: 'Oldest First', field: 'deductedAt', dir: 'asc' as const },
+                  { label: 'Amount: High → Low', field: 'amount', dir: 'desc' as const },
+                  { label: 'Amount: Low → High', field: 'amount', dir: 'asc' as const },
+                ].map((opt) => (
+                  <button
+                    key={`${opt.field}-${opt.dir}`}
+                    onClick={() => { setSortField(opt.field); setSortDir(opt.dir); setPage(1); setShowSortMenu(false) }}
+                    className={`w-full text-left px-3 py-1.5 text-sm hover:bg-panel-hover ${sortField === opt.field && sortDir === opt.dir ? 'text-accent-text font-medium' : 'text-prose'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Bulk Action Bar */}

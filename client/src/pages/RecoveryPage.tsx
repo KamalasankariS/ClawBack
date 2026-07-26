@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useTitle } from '../hooks/useTitle'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { STATUS_CONFIG } from '../lib/constants'
-import { TrendingUp, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react'
+import { TrendingUp, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+
+interface Company { id: number; name: string }
+interface Retailer { id: number; name: string }
 
 interface Summary {
   totalDeductions: number
@@ -65,6 +68,26 @@ export function RecoveryPage() {
   const [page, setPage] = useState(1)
   const [response, setResponse] = useState<ListResponse | null>(null)
 
+  // Filters
+  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState('')
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>(null)
+  const debouncedSearch = useCallback((value: string) => {
+    if (searchTimer.current) clearTimeout(searchTimer.current)
+    searchTimer.current = setTimeout(() => { setSearch(value); setPage(1) }, 300)
+  }, [])
+  const [companyFilter, setCompanyFilter] = useState('')
+  const [retailerFilter, setRetailerFilter] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [retailers, setRetailers] = useState<Retailer[]>([])
+
+  useEffect(() => {
+    api<Company[]>('/companies').then(setCompanies)
+    api<Retailer[]>('/retailers').then(setRetailers)
+  }, [])
+
   useEffect(() => {
     const companyId = (window as any).__companyId
     const qs = companyId ? `?companyId=${companyId}` : ''
@@ -72,9 +95,10 @@ export function RecoveryPage() {
   }, [])
 
   useEffect(() => {
-    const companyId = (window as any).__companyId
+    const globalCompanyId = (window as any).__companyId
     const params = new URLSearchParams()
-    if (companyId) params.set('companyId', companyId)
+    if (companyFilter) params.set('companyId', companyFilter)
+    else if (globalCompanyId) params.set('companyId', globalCompanyId)
 
     if (tab === 'resolved') {
       params.set('status', 'resolved_won,resolved_lost,resolved_partial,closed')
@@ -82,12 +106,16 @@ export function RecoveryPage() {
       params.set('status', 'open')
     }
 
+    if (retailerFilter) params.set('retailerId', retailerFilter)
+    if (search) params.set('search', search)
+    if (dateFrom) params.set('dateFrom', dateFrom)
+    if (dateTo) params.set('dateTo', dateTo)
     params.set('sort', `${sortField}:${sortDir}`)
     params.set('page', String(page))
     params.set('limit', '25')
 
     api<ListResponse>(`/deductions?${params}`).then(setResponse)
-  }, [tab, sortField, sortDir, page])
+  }, [tab, sortField, sortDir, page, companyFilter, retailerFilter, search, dateFrom, dateTo])
 
   const totalPages = response ? Math.ceil(response.total / response.limit) : 0
 
@@ -191,6 +219,55 @@ export function RecoveryPage() {
             </>
           )}
         </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+          <input
+            type="text"
+            placeholder="Search by invoice number..."
+            className="w-full pl-9 pr-3 py-2 text-sm border border-edge rounded-md bg-input-bg text-heading"
+            value={searchInput}
+            onChange={(e) => { setSearchInput(e.target.value); debouncedSearch(e.target.value) }}
+          />
+        </div>
+        <select
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
+          value={companyFilter}
+          onChange={(e) => { setCompanyFilter(e.target.value); setPage(1) }}
+        >
+          <option value="">All Companies</option>
+          {companies.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+        <select
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
+          value={retailerFilter}
+          onChange={(e) => { setRetailerFilter(e.target.value); setPage(1) }}
+        >
+          <option value="">All Retailers</option>
+          {retailers.map((r) => (
+            <option key={r.id} value={r.id}>{r.name}</option>
+          ))}
+        </select>
+        <input
+          type="date"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
+          value={dateFrom}
+          onChange={(e) => { setDateFrom(e.target.value); setPage(1) }}
+          title="From date"
+        />
+        <span className="text-faint self-center text-xs">to</span>
+        <input
+          type="date"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
+          value={dateTo}
+          onChange={(e) => { setDateTo(e.target.value); setPage(1) }}
+          title="To date"
+        />
       </div>
 
       {/* Table */}
