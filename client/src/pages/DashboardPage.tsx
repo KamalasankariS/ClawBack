@@ -378,18 +378,19 @@ export function DashboardPage() {
                   ]}
                 />
                 <Legend wrapperStyle={{ fontSize: 11, color: 'var(--c-subtle)' }} formatter={(v) => v === 'disputedAmount' ? 'Disputed' : 'Recovered'} />
-                <Bar dataKey="disputedAmount" name="disputedAmount" radius={[3, 3, 0, 0]}>
+                <Bar dataKey="disputedAmount" name="disputedAmount" fill="#e8913a" radius={[3, 3, 0, 0]}>
                   {trends.map((_, idx) => (
                     <Cell key={idx} fill="#e8913a" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
                   ))}
                 </Bar>
-                <Bar dataKey="recoveredAmount" name="recoveredAmount" radius={[3, 3, 0, 0]}>
+                <Bar dataKey="recoveredAmount" name="recoveredAmount" fill="#4a7c59" radius={[3, 3, 0, 0]}>
                   {trends.map((_, idx) => (
                     <Cell key={idx} fill="#4a7c59" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            <p className="text-[10px] text-faint text-center -mt-1">Month (when deduction was created)</p>
           </div>
 
           {/* Graph 4: Recovery Rate Over Time — area chart with crosshair tooltip */}
@@ -426,6 +427,7 @@ export function DashboardPage() {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            <p className="text-[10px] text-faint text-center -mt-1">Month (when deduction was created)</p>
           </div>
         </div>
       )}

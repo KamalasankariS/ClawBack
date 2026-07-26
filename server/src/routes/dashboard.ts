@@ -199,9 +199,12 @@ router.get('/aging', async (req, res) => {
 router.get('/trends', async (req, res) => {
   const companyId = req.query.companyId ? parseInt(req.query.companyId as string) : undefined;
 
+  // Only include deductions within a reasonable date range (exclude mis-parsed future dates)
+  const cutoff = new Date();
+  cutoff.setFullYear(cutoff.getFullYear() + 1);
   const where: Prisma.DeductionWhereInput = {
     isDeleted: false,
-    deductedAt: { not: null },
+    deductedAt: { not: null, lt: cutoff },
   };
   if (companyId) where.companyId = companyId;
 
@@ -220,9 +223,10 @@ router.get('/trends', async (req, res) => {
     const key = `${d.deductedAt.getFullYear()}-${String(d.deductedAt.getMonth() + 1).padStart(2, '0')}`;
     const entry = months.get(key) ?? { deductions: 0, totalAmount: 0, disputedAmount: 0, recoveredAmount: 0 };
     entry.deductions++;
-    entry.totalAmount += Number(d.amount);
+    const amt = Math.abs(Number(d.amount));
+    entry.totalAmount += amt;
     if (disputeStatuses.includes(d.status)) {
-      entry.disputedAmount += Number(d.amount);
+      entry.disputedAmount += amt;
     }
     if (resolvedStatuses.includes(d.status)) {
       entry.recoveredAmount += Number(d.recoveredAmount ?? 0);

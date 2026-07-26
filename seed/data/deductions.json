@@ -625,7 +625,7 @@
     "status": "Dispute - Filed",
     "is_deleted": 1,
     "__v": 0,
-    "notes": "‼️ URGENT",
+    "notes": "\u203c\ufe0f URGENT",
     "raw": {
       "src": "textract",
       "conf": 0.01
@@ -1645,7 +1645,7 @@
     "amount": -50500000,
     "deducted_at": "2026-07-10",
     "status": "Dispute - Filing in progress",
-    "is_deleted": false
+    "is_deleted": true
   },
   {
     "id": 1060,
@@ -3198,7 +3198,7 @@
     "deducted_at": "11/3/26",
     "status": null,
     "is_deleted": false,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1565,
@@ -4594,7 +4594,7 @@
     "amount": 999999999.99,
     "deducted_at": "2026/06/19 00:00:00",
     "status": null,
-    "is_deleted": 0
+    "is_deleted": true
   },
   {
     "id": 1045,
@@ -5231,7 +5231,7 @@
     "status": "In Review",
     "is_deleted": false,
     "__v": 0,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1656,
@@ -5493,7 +5493,7 @@
     "deducted_at": "March 1, 2026",
     "status": null,
     "is_deleted": false,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1993,
@@ -6444,7 +6444,7 @@
     "deducted_at": "5/26/26",
     "status": null,
     "is_deleted": false,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1148,
@@ -6827,7 +6827,7 @@
     "deducted_at": "21-01-2026",
     "status": "Dispute - Filing in progress",
     "is_deleted": false,
-    "notes": "‼️ URGENT",
+    "notes": "\u203c\ufe0f URGENT",
     "raw": {
       "src": "textract",
       "conf": 0.17
@@ -7713,7 +7713,7 @@
     "status": "COMPLETE",
     "is_deleted": true,
     "retailer": "Gordon Food Service (GFC)",
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1553,
@@ -10947,7 +10947,7 @@
     "deducted_at": "2026/02/03 00:00:00",
     "status": "Dispute - Filed",
     "is_deleted": false,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1017,
@@ -11137,7 +11137,7 @@
     "deducted_at": "2026-10-09",
     "status": "Send to Ops",
     "is_deleted": false,
-    "notes": "‼️ URGENT"
+    "notes": "\u203c\ufe0f URGENT"
   },
   {
     "id": 1936,
