@@ -76,42 +76,51 @@ router.get('/by-retailer', async (req, res) => {
 
   const deductions = await prisma.deduction.findMany({
     where,
-    select: { retailerId: true, amount: true, status: true, recoveredAmount: true },
+    select: { retailerId: true, companyId: true, amount: true, status: true, recoveredAmount: true },
   });
 
   const retailers = await prisma.retailer.findMany();
   const retailerMap = new Map(retailers.map(r => [r.id, r.name]));
 
-  const disputeStatuses = ['in_dispute', 'dispute_filed', 'resolved_won', 'resolved_lost', 'resolved_partial', 'closed'];
-  const byRetailer = new Map<number, { totalAmount: number; disputedAmount: number; recoveredAmount: number; count: number }>();
+  const companies = await prisma.company.findMany();
+  const companyMap = new Map(companies.map(c => [c.id, c.name]));
+
+  // Group by retailer, then by company within each retailer
+  const byRetailer = new Map<number, { totalAmount: number; byCompany: Map<string, number> }>();
 
   for (const d of deductions) {
     if (!d.retailerId) continue;
-    const entry = byRetailer.get(d.retailerId) ?? { totalAmount: 0, disputedAmount: 0, recoveredAmount: 0, count: 0 };
-    entry.totalAmount += Number(d.amount);
-    entry.count++;
-    if (disputeStatuses.includes(d.status)) {
-      entry.disputedAmount += Number(d.amount);
-      entry.recoveredAmount += Number(d.recoveredAmount ?? 0);
-    }
+    const entry = byRetailer.get(d.retailerId) ?? { totalAmount: 0, byCompany: new Map() };
+    const amt = Number(d.amount);
+    entry.totalAmount += amt;
+    const cName = d.companyId ? (companyMap.get(d.companyId) ?? 'Unknown') : 'Unknown';
+    entry.byCompany.set(cName, (entry.byCompany.get(cName) ?? 0) + amt);
     byRetailer.set(d.retailerId, entry);
   }
 
-  const result = Array.from(byRetailer.entries())
-    .map(([id, data]) => ({
-      retailerId: id,
-      retailerName: retailerMap.get(id) ?? 'Unknown',
-      totalAmount: Math.round(data.totalAmount * 100) / 100,
-      disputedAmount: Math.round(data.disputedAmount * 100) / 100,
-      recoveredAmount: Math.round(data.recoveredAmount * 100) / 100,
-      deductionCount: data.count,
-      recoveryRate: data.disputedAmount > 0
-        ? Math.round((data.recoveredAmount / data.disputedAmount) * 1000) / 10
-        : 0,
-    }))
-    .sort((a, b) => b.totalAmount - a.totalAmount);
+  // Only include companies that actually have deductions
+  const activeCompanyNames = new Set<string>();
+  for (const data of byRetailer.values()) {
+    for (const cName of data.byCompany.keys()) {
+      activeCompanyNames.add(cName);
+    }
+  }
+  const companyNames = Array.from(activeCompanyNames).sort();
 
-  res.json(result);
+  const result = Array.from(byRetailer.entries())
+    .map(([id, data]) => {
+      const row: Record<string, unknown> = {
+        retailerName: retailerMap.get(id) ?? 'Unknown',
+        totalAmount: Math.round(data.totalAmount * 100) / 100,
+      };
+      for (const cName of companyNames) {
+        row[cName] = Math.round((data.byCompany.get(cName) ?? 0) * 100) / 100;
+      }
+      return row;
+    })
+    .sort((a, b) => (b.totalAmount as number) - (a.totalAmount as number));
+
+  res.json({ data: result, companies: companyNames });
 });
 
 // GET /api/dashboard/aging
