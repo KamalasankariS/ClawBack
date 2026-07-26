@@ -105,28 +105,28 @@ function ActionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-0 overflow-hidden">
+      <div className="relative bg-panel rounded-xl shadow-xl w-full max-w-md mx-4 p-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-edge">
+          <h3 className="text-base font-semibold text-heading">{title}</h3>
+          <button onClick={onClose} className="text-faint hover:text-prose">
             <X size={18} />
           </button>
         </div>
 
         {/* Body */}
         <div className="px-5 py-4 space-y-3">
-          <p className="text-sm text-gray-600">{description}</p>
+          <p className="text-sm text-prose">{description}</p>
 
           {children}
 
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">
+            <label className="text-xs font-medium text-subtle mb-1 block">
               Notes <span className="text-red-500">*</span>
             </label>
             <textarea
-              className={`w-full text-sm border rounded-md px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-gray-300 ${
-                notes.trim() ? 'border-gray-200' : 'border-red-200'
+              className={`w-full text-sm border rounded-md px-3 py-2 resize-none bg-input-bg text-heading focus:outline-none focus:ring-2 focus:ring-accent/30 ${
+                notes.trim() ? 'border-edge' : 'border-red-300 dark:border-red-500/30'
               }`}
               rows={3}
               placeholder="Required — explain the reasoning behind this action..."
@@ -135,14 +135,14 @@ function ActionModal({
               autoFocus
             />
             {!notes.trim() && (
-              <p className="text-[10px] text-red-400 mt-0.5">Notes are required before you can proceed</p>
+              <p className="text-[10px] text-red-500 dark:text-red-400 mt-0.5">Notes are required before you can proceed</p>
             )}
           </div>
 
           {/* File upload */}
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">
-              Supporting Documents <span className="text-gray-400">(optional)</span>
+            <label className="text-xs font-medium text-subtle mb-1 block">
+              Supporting Documents <span className="text-faint">(optional)</span>
             </label>
             <input
               ref={fileRef}
@@ -156,18 +156,18 @@ function ActionModal({
               type="button"
               disabled={uploading}
               onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-dashed border-gray-300 rounded-md text-gray-500 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-dashed border-edge rounded-md text-subtle hover:border-faint hover:bg-panel-hover disabled:opacity-50 transition-colors"
             >
               <Paperclip size={12} /> {uploading ? 'Uploading...' : 'Attach files'}
             </button>
             {attachments.length > 0 && (
               <div className="mt-1.5 space-y-1">
                 {attachments.map((a, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs bg-gray-50 rounded px-2 py-1">
-                    <span className="flex items-center gap-1 text-gray-600 truncate">
+                  <div key={i} className="flex items-center justify-between text-xs bg-panel-hover rounded px-2 py-1">
+                    <span className="flex items-center gap-1 text-prose truncate">
                       <FileIcon size={10} /> {a.originalName}
                     </span>
-                    <button onClick={() => setAttachments(prev => prev.filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500">
+                    <button onClick={() => setAttachments(prev => prev.filter((_, j) => j !== i))} className="text-faint hover:text-red-500">
                       <X size={10} />
                     </button>
                   </div>
@@ -178,17 +178,17 @@ function ActionModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+        <div className="flex justify-end gap-2 px-5 py-3 border-t border-edge-light bg-panel-hover">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+            className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
           >
             Cancel
           </button>
           <button
             disabled={loading || !notes.trim() || uploading}
             onClick={() => onConfirm(notes, attachments)}
-            className={`px-4 py-2 text-sm text-white rounded-md disabled:opacity-50 ${confirmColor}`}
+            className={`px-4 py-2 text-sm text-white rounded-md disabled:opacity-50 transition-colors ${confirmColor}`}
           >
             {loading ? 'Submitting...' : confirmLabel}
           </button>
@@ -288,13 +288,13 @@ export function DeductionDetailPage() {
       <div>
         <div className="h-5 w-36 skeleton mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-          <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-5">
+          <div className="lg:col-span-2 bg-panel rounded-lg border border-edge p-5">
             <div className="h-8 w-40 skeleton mb-3" />
             <div className="grid grid-cols-2 gap-4">
               {[1,2,3,4,5,6].map(i => <div key={i} className="h-12 skeleton" />)}
             </div>
           </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-5">
+          <div className="bg-panel rounded-lg border border-edge p-5">
             <div className="h-5 w-20 skeleton mb-3" />
             <div className="space-y-2">
               {[1,2,3].map(i => <div key={i} className="h-10 skeleton" />)}
@@ -305,7 +305,7 @@ export function DeductionDetailPage() {
     )
   }
 
-  const sc = STATUS_CONFIG[deduction.status] || { label: deduction.status, color: 'text-gray-500', bg: 'bg-gray-50' }
+  const sc = STATUS_CONFIG[deduction.status] || { label: deduction.status, color: 'text-subtle', bg: 'bg-panel-hover' }
 
   const doAction = async (path: string, body: object) => {
     setLoading(true)
@@ -338,7 +338,7 @@ export function DeductionDetailPage() {
       title: 'Accept This Deduction',
       description: `You're accepting ${formatCurrency(deduction.amount)} as a legitimate deduction. This means we won't dispute it.`,
       confirmLabel: 'Accept Deduction',
-      confirmColor: 'bg-gray-700 hover:bg-gray-800',
+      confirmColor: 'bg-accent hover:bg-accent-hover',
     },
     park: {
       title: 'Put On Hold',
@@ -368,7 +368,7 @@ export function DeductionDetailPage() {
       title: 'Close This Deduction',
       description: `Closing this deduction permanently. Any final notes?`,
       confirmLabel: 'Close',
-      confirmColor: 'bg-gray-800 hover:bg-gray-900',
+      confirmColor: 'bg-accent hover:bg-accent-hover',
     },
   }
 
@@ -403,33 +403,33 @@ export function DeductionDetailPage() {
   return (
     <div>
       {/* Header */}
-      <button onClick={() => navigate('/deductions')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+      <button onClick={() => navigate('/deductions')} className="flex items-center gap-1 text-sm text-subtle hover:text-heading mb-4 transition-colors">
         <ArrowLeft size={14} /> Back to Deductions
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Main Info */}
-        <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-4 sm:p-5">
+        <div className="lg:col-span-2 bg-panel rounded-lg border border-edge p-4 sm:p-5">
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-2xl font-bold text-gray-900">{formatCurrency(deduction.amount)}</h2>
+                <h2 className="text-2xl font-bold text-heading">{formatCurrency(deduction.amount)}</h2>
                 <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium border ${sc.bg} ${sc.color}`}>
                   {sc.label}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <p className="text-sm text-gray-500">Deduction #{deduction.id}</p>
+                <p className="text-sm text-subtle">Deduction #{deduction.id}</p>
                 <button
                   onClick={openEditModal}
-                  className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50"
+                  className="flex items-center gap-1 text-xs text-faint hover:text-prose border border-edge rounded px-1.5 py-0.5 hover:bg-panel-hover transition-colors"
                 >
                   <Pencil size={10} /> Edit
                 </button>
               </div>
             </div>
             {deduction.reason?.typicallyDisputable && deduction.status === 'open' && (
-              <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2.5 py-1">
+              <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/25 rounded-full px-2.5 py-1">
                 <AlertTriangle size={12} /> Typically Disputable
               </span>
             )}
@@ -437,61 +437,61 @@ export function DeductionDetailPage() {
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-gray-500">Company</span>
-              <p className="font-medium">{deduction.company?.name || 'Unknown'}</p>
+              <span className="text-subtle">Company</span>
+              <p className="font-medium text-heading">{deduction.company?.name || 'Unknown'}</p>
             </div>
             <div>
-              <span className="text-gray-500">Retailer</span>
-              <p className="font-medium">{deduction.retailer?.name || '—'}</p>
+              <span className="text-subtle">Retailer</span>
+              <p className="font-medium text-heading">{deduction.retailer?.name || '—'}</p>
             </div>
             <div>
-              <span className="text-gray-500">Reason</span>
-              <p className="font-medium">{deduction.reason?.label || '—'}</p>
+              <span className="text-subtle">Reason</span>
+              <p className="font-medium text-heading">{deduction.reason?.label || '—'}</p>
             </div>
             <div>
-              <span className="text-gray-500">Invoice</span>
-              <p className="font-medium font-mono">{deduction.invoiceNumber || '—'}</p>
+              <span className="text-subtle">Invoice</span>
+              <p className="font-medium font-mono text-heading">{deduction.invoiceNumber || '—'}</p>
             </div>
             <div>
-              <span className="text-gray-500">Deducted Date</span>
-              <p className="font-medium">{formatDate(deduction.deductedAt)}</p>
+              <span className="text-subtle">Deducted Date</span>
+              <p className="font-medium text-heading">{formatDate(deduction.deductedAt)}</p>
             </div>
             {deduction.recoveredAmount && (
               <div>
-                <span className="text-gray-500">Recovered</span>
-                <p className="font-medium text-green-700">{formatCurrency(deduction.recoveredAmount)}</p>
+                <span className="text-subtle">Recovered</span>
+                <p className="font-medium text-green-700 dark:text-green-400">{formatCurrency(deduction.recoveredAmount)}</p>
               </div>
             )}
             {deduction.resolutionNotes && (
               <div className="col-span-2">
-                <span className="text-gray-500">Resolution Notes</span>
-                <p className="font-medium">{deduction.resolutionNotes}</p>
+                <span className="text-subtle">Resolution Notes</span>
+                <p className="font-medium text-heading">{deduction.resolutionNotes}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Actions Panel */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">Actions</h3>
+        <div className="bg-panel rounded-lg border border-edge p-5">
+          <h3 className="text-sm font-medium text-prose mb-3">Actions</h3>
 
           {deduction.status === 'open' && (
             <div className="space-y-2">
               <button
                 onClick={() => setModal({ type: 'dispute' })}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors"
               >
                 <AlertTriangle size={14} /> Dispute
               </button>
               <button
                 onClick={() => setModal({ type: 'accept' })}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white text-gray-700 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-panel text-prose text-sm border border-edge rounded-md hover:bg-panel-hover transition-colors"
               >
                 <CheckCircle size={14} /> Accept
               </button>
               <button
                 onClick={() => setModal({ type: 'park' })}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white text-gray-700 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-panel text-prose text-sm border border-edge rounded-md hover:bg-panel-hover transition-colors"
               >
                 <PauseCircle size={14} /> Put On Hold
               </button>
@@ -501,7 +501,7 @@ export function DeductionDetailPage() {
           {deduction.status === 'parked' && (
             <button
               onClick={() => setModal({ type: 'unpark' })}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
             >
               <ArrowLeft size={14} /> Take Off Hold
             </button>
@@ -510,7 +510,7 @@ export function DeductionDetailPage() {
           {deduction.status === 'in_dispute' && (
             <button
               onClick={() => setModal({ type: 'file' })}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors"
             >
               <Send size={14} /> File Dispute
             </button>
@@ -519,7 +519,7 @@ export function DeductionDetailPage() {
           {deduction.status === 'dispute_filed' && (
             <button
               onClick={() => { setResolutionType('won'); setRecoveredAmount(''); setModal({ type: 'resolve' }) }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
             >
               <Trophy size={14} /> Record Resolution
             </button>
@@ -528,29 +528,29 @@ export function DeductionDetailPage() {
           {['resolved_won', 'resolved_lost', 'resolved_partial'].includes(deduction.status) && (
             <button
               onClick={() => setModal({ type: 'close' })}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-900"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-accent text-white text-sm font-medium rounded-md hover:bg-accent-hover transition-colors"
             >
               <Lock size={14} /> Close
             </button>
           )}
 
           {['accepted', 'closed'].includes(deduction.status) && (
-            <p className="text-xs text-gray-500 text-center py-4">No actions available — this deduction is {deduction.status}.</p>
+            <p className="text-xs text-subtle text-center py-4">No actions available — this deduction is {deduction.status}.</p>
           )}
 
           {/* Add Note */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-edge">
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Add a note..."
-                className="flex-1 text-sm border border-gray-200 rounded px-3 py-1.5"
+                className="flex-1 text-sm border border-edge rounded px-3 py-1.5 bg-input-bg text-heading"
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addNote()}
               />
-              <button onClick={addNote} className="px-2 py-1.5 bg-gray-100 rounded hover:bg-gray-200">
-                <MessageSquare size={14} />
+              <button onClick={addNote} className="px-2 py-1.5 bg-panel-hover rounded hover:bg-edge transition-colors">
+                <MessageSquare size={14} className="text-subtle" />
               </button>
             </div>
           </div>
@@ -558,44 +558,44 @@ export function DeductionDetailPage() {
       </div>
 
       {/* Activity Timeline */}
-      <div className="bg-white rounded-lg border border-gray-200 p-5">
-        <h3 className="text-sm font-medium text-gray-700 mb-4">Activity Timeline</h3>
+      <div className="bg-panel rounded-lg border border-edge p-5">
+        <h3 className="text-sm font-medium text-prose mb-4">Activity Timeline</h3>
         <div className="space-y-0">
           {deduction.activities.map((a, i) => {
             const isLast = i === deduction.activities.length - 1
             return (
               <div key={a.id} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-2 h-2 rounded-full bg-gray-400 mt-1.5" />
-                  {!isLast && <div className="w-px flex-1 bg-gray-200" />}
+                  <div className="w-2 h-2 rounded-full bg-accent mt-1.5" />
+                  {!isLast && <div className="w-px flex-1 bg-edge" />}
                 </div>
                 <div className="pb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-heading">
                       {a.user.name}
                     </span>
-                    <span className="text-xs text-gray-400">{timeAgo(a.createdAt)}</span>
+                    <span className="text-xs text-faint">{timeAgo(a.createdAt)}</span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-prose">
                     {ACTION_LABELS[a.action] || a.action}
                     {a.fromStatus && a.toStatus && a.action === 'status_change' && (
-                      <span className="text-gray-400">
+                      <span className="text-faint">
                         {' '}({STATUS_CONFIG[a.fromStatus]?.label} → {STATUS_CONFIG[a.toStatus]?.label})
                       </span>
                     )}
                   </p>
                   {a.details?.notes && (
-                    <p className="text-xs text-gray-500 mt-1 bg-gray-50 rounded px-2 py-1">
+                    <p className="text-xs text-subtle mt-1 bg-panel-hover rounded px-2 py-1">
                       {a.details.notes}
                     </p>
                   )}
                   {a.details?.note && (
-                    <p className="text-xs text-gray-500 mt-1 bg-gray-50 rounded px-2 py-1">
+                    <p className="text-xs text-subtle mt-1 bg-panel-hover rounded px-2 py-1">
                       {a.details.note}
                     </p>
                   )}
                   {a.details?.recoveredAmount != null && a.details.recoveredAmount > 0 && (
-                    <p className="text-xs text-green-600 mt-1">
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
                       Recovered: {formatCurrency(a.details.recoveredAmount)}
                     </p>
                   )}
@@ -607,7 +607,7 @@ export function DeductionDetailPage() {
                           href={`/api/uploads/${att.filename}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                          className="flex items-center gap-1 text-xs text-accent-text hover:underline"
                         >
                           <Paperclip size={10} /> {att.originalName}
                         </a>
@@ -619,7 +619,7 @@ export function DeductionDetailPage() {
             )
           })}
           {deduction.activities.length === 0 && (
-            <p className="text-sm text-gray-400">No activity yet.</p>
+            <p className="text-sm text-faint">No activity yet.</p>
           )}
         </div>
       </div>
@@ -640,7 +640,7 @@ export function DeductionDetailPage() {
           {modal?.type === 'resolve' && (
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Resolution Type</label>
+                <label className="text-xs font-medium text-subtle mb-1.5 block">Resolution Type</label>
                 <div className="flex gap-1.5">
                   {(['won', 'lost', 'partial'] as const).map((t) => (
                     <button
@@ -648,8 +648,8 @@ export function DeductionDetailPage() {
                       onClick={() => setResolutionType(t)}
                       className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md border transition-colors ${
                         resolutionType === t
-                          ? 'bg-gray-900 text-white border-gray-900'
-                          : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                          ? 'bg-accent text-white border-accent'
+                          : 'bg-panel text-prose border-edge hover:bg-panel-hover'
                       }`}
                     >
                       {t === 'won' && <Trophy size={12} />}
@@ -662,16 +662,16 @@ export function DeductionDetailPage() {
               </div>
               {resolutionType === 'partial' && (
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">
+                  <label className="text-xs font-medium text-subtle mb-1 block">
                     Recovered Amount (of {formatCurrency(deduction.amount)})
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-faint text-sm">$</span>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
-                      className="w-full text-sm border border-gray-200 rounded-md pl-7 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                      className="w-full text-sm border border-edge rounded-md pl-7 pr-3 py-2 bg-input-bg text-heading focus:outline-none focus:ring-2 focus:ring-accent/30"
                       value={recoveredAmount}
                       onChange={(e) => setRecoveredAmount(e.target.value)}
                       placeholder="0.00"
@@ -680,12 +680,12 @@ export function DeductionDetailPage() {
                 </div>
               )}
               {resolutionType === 'won' && (
-                <p className="text-xs text-green-600 bg-green-50 rounded px-2 py-1.5">
+                <p className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 rounded px-2 py-1.5">
                   Full amount of {formatCurrency(deduction.amount)} will be marked as recovered.
                 </p>
               )}
               {resolutionType === 'lost' && (
-                <p className="text-xs text-red-600 bg-red-50 rounded px-2 py-1.5">
+                <p className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded px-2 py-1.5">
                   No amount will be recovered. The deduction stands.
                 </p>
               )}
@@ -698,16 +698,16 @@ export function DeductionDetailPage() {
       {showEdit && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowEdit(false)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-              <h3 className="text-base font-semibold text-gray-900">Edit Deduction #{deduction.id}</h3>
-              <button onClick={() => setShowEdit(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="relative bg-panel rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-edge">
+              <h3 className="text-base font-semibold text-heading">Edit Deduction #{deduction.id}</h3>
+              <button onClick={() => setShowEdit(false)} className="text-faint hover:text-prose">
                 <X size={18} />
               </button>
             </div>
 
             <div className="px-5 py-4 space-y-3">
-              <p className="text-sm text-gray-500">Fix missing or incorrect data. All changes are logged in the activity timeline.</p>
+              <p className="text-sm text-subtle">Fix missing or incorrect data. All changes are logged in the activity timeline.</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <SelectWithAdd
@@ -754,23 +754,23 @@ export function DeductionDetailPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Amount</label>
+                  <label className="text-xs font-medium text-subtle mb-1 block">Amount</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-faint text-sm">$</span>
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full text-sm border border-gray-200 rounded-md pl-7 pr-3 py-2"
+                      className="w-full text-sm border border-edge rounded-md pl-7 pr-3 py-2 bg-input-bg text-heading"
                       value={editAmount}
                       onChange={(e) => setEditAmount(e.target.value)}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Deduction Date</label>
+                  <label className="text-xs font-medium text-subtle mb-1 block">Deduction Date</label>
                   <input
                     type="date"
-                    className="w-full text-sm border border-gray-200 rounded-md px-3 py-2"
+                    className="w-full text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
                     value={editDate}
                     onChange={(e) => setEditDate(e.target.value)}
                   />
@@ -778,10 +778,10 @@ export function DeductionDetailPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Invoice Number</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Invoice Number</label>
                 <input
                   type="text"
-                  className="w-full text-sm border border-gray-200 rounded-md px-3 py-2"
+                  className="w-full text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
                   value={editInvoice}
                   onChange={(e) => setEditInvoice(e.target.value)}
                   placeholder="e.g. INV-12345"
@@ -789,17 +789,17 @@ export function DeductionDetailPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-edge-light bg-panel-hover">
               <button
                 onClick={() => setShowEdit(false)}
-                className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+                className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
               >
                 Cancel
               </button>
               <button
                 disabled={editLoading}
                 onClick={handleSaveEdit}
-                className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 transition-colors"
               >
                 {editLoading ? 'Saving...' : 'Save Changes'}
               </button>

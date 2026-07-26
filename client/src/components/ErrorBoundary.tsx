@@ -19,21 +19,21 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center max-w-md">
-            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={24} className="text-red-500" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-sm text-gray-500 mb-4">
+            <h2 className="text-lg font-semibold text-heading mb-2">Something went wrong</h2>
+            <p className="text-sm text-subtle mb-4">
               An unexpected error occurred. Try refreshing the page.
             </p>
             {this.state.error && (
-              <pre className="text-xs text-left bg-gray-50 border border-gray-200 rounded-md p-3 mb-4 overflow-x-auto text-gray-600">
+              <pre className="text-xs text-left bg-panel-hover border border-edge rounded-md p-3 mb-4 overflow-x-auto text-prose">
                 {this.state.error.message}
               </pre>
             )}
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800"
+              className="px-4 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover transition-colors"
             >
               Refresh Page
             </button>

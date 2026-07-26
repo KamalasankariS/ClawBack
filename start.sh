@@ -94,8 +94,8 @@ if [ ! -f ".env" ]; then
 fi
 
 # Run migrations
-npx prisma migrate deploy --schema=prisma/schema.prisma 2>/dev/null || npx prisma db push --skip-generate 2>/dev/null
-npx prisma generate --schema=prisma/schema.prisma 2>/dev/null
+npx prisma migrate deploy --schema=prisma/schema.prisma > /dev/null 2>&1 || npx prisma db push --skip-generate > /dev/null 2>&1
+npx prisma generate --schema=prisma/schema.prisma > /dev/null 2>&1
 echo -e "  Database migrated ${GREEN}OK${NC}"
 
 # ─── 5. Seed data (only if empty) ───
@@ -150,6 +150,13 @@ echo ""
 echo -e "  First time? Register at the login page."
 echo -e "  Press ${YELLOW}Ctrl+C${NC} to stop."
 echo ""
+
+# Auto-open in default browser
+if command -v open &> /dev/null; then
+  open http://localhost:5173
+elif command -v xdg-open &> /dev/null; then
+  xdg-open http://localhost:5173
+fi
 
 # Wait for either process to exit
 wait $SERVER_PID $CLIENT_PID

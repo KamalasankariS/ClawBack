@@ -163,10 +163,10 @@ export function DeductionsPage() {
   }
 
   const SortIcon = ({ field }: { field: string }) => {
-    if (sortField !== field) return <ChevronDown size={10} className="text-gray-300 ml-0.5" />
+    if (sortField !== field) return <ChevronDown size={10} className="text-faint ml-0.5" />
     return sortDir === 'asc'
-      ? <ChevronUp size={10} className="text-gray-900 ml-0.5" />
-      : <ChevronDown size={10} className="text-gray-900 ml-0.5" />
+      ? <ChevronUp size={10} className="text-heading ml-0.5" />
+      : <ChevronDown size={10} className="text-heading ml-0.5" />
   }
 
   const handleExport = async () => {
@@ -378,23 +378,23 @@ export function DeductionsPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Deductions</h2>
+        <h2 className="text-xl font-semibold text-heading">Deductions</h2>
         <div className="flex gap-2">
           <button
             onClick={handleExport}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-edge rounded-md bg-panel text-prose hover:bg-panel-hover transition-colors"
           >
             <Download size={14} /> <span className="hidden sm:inline">Export CSV</span><span className="sm:hidden">Export</span>
           </button>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md bg-white hover:bg-gray-50"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-edge rounded-md bg-panel text-prose hover:bg-panel-hover transition-colors"
           >
             <Upload size={14} /> <span className="hidden sm:inline">Upload CSV</span><span className="sm:hidden">Upload</span>
           </button>
           <button
             onClick={() => { resetNewForm(); setShowNewForm(true) }}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover transition-colors"
           >
             <Plus size={14} /> <span className="hidden sm:inline">New Deduction</span><span className="sm:hidden">New</span>
           </button>
@@ -404,17 +404,17 @@ export function DeductionsPage() {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
           <input
             type="text"
             placeholder="Search by invoice number..."
-            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md bg-white"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-edge rounded-md bg-input-bg text-heading"
             value={searchInput}
             onChange={(e) => { setSearchInput(e.target.value); debouncedSearch(e.target.value) }}
           />
         </div>
         <select
-          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
           value={companyFilter}
           onChange={(e) => { setCompanyFilter(e.target.value); setPage(1) }}
         >
@@ -426,27 +426,27 @@ export function DeductionsPage() {
         <div className="relative">
           <button
             onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-            className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white flex items-center gap-1.5 min-w-[140px]"
+            className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading flex items-center gap-1.5 min-w-[140px]"
           >
             {statusFilter.length === 0
               ? 'All Statuses'
               : `${statusFilter.length} selected`}
-            <ChevronDown size={12} className="ml-auto text-gray-400" />
+            <ChevronDown size={12} className="ml-auto text-faint" />
           </button>
           {showStatusDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowStatusDropdown(false)} />
-              <div className="absolute top-full mt-1 left-0 z-20 bg-white border border-gray-200 rounded-md shadow-lg py-1 w-48">
+              <div className="absolute top-full mt-1 left-0 z-20 bg-panel border border-edge rounded-md shadow-lg py-1 w-48">
                 {statusFilter.length > 0 && (
                   <button
                     onClick={() => { setStatusFilter([]); setPage(1) }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50"
+                    className="w-full text-left px-3 py-1.5 text-xs text-subtle hover:bg-panel-hover"
                   >
                     Clear all
                   </button>
                 )}
                 {Object.entries(STATUS_CONFIG).map(([val, { label, color }]) => (
-                  <label key={val} className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-gray-50 cursor-pointer">
+                  <label key={val} className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-panel-hover cursor-pointer">
                     <input
                       type="checkbox"
                       checked={statusFilter.includes(val)}
@@ -456,7 +456,7 @@ export function DeductionsPage() {
                         )
                         setPage(1)
                       }}
-                      className="rounded border-gray-300"
+                      className="rounded border-edge"
                     />
                     <span className={color}>{label}</span>
                   </label>
@@ -466,7 +466,7 @@ export function DeductionsPage() {
           )}
         </div>
         <select
-          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
           value={retailerFilter}
           onChange={(e) => { setRetailerFilter(e.target.value); setPage(1) }}
         >
@@ -477,15 +477,15 @@ export function DeductionsPage() {
         </select>
         <input
           type="date"
-          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
           value={dateFrom}
           onChange={(e) => { setDateFrom(e.target.value); setPage(1) }}
           title="From date"
         />
-        <span className="text-gray-400 self-center text-xs">to</span>
+        <span className="text-faint self-center text-xs">to</span>
         <input
           type="date"
-          className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+          className="text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
           value={dateTo}
           onChange={(e) => { setDateTo(e.target.value); setPage(1) }}
           title="To date"
@@ -494,11 +494,11 @@ export function DeductionsPage() {
 
       {/* Bulk Action Bar */}
       {selected.size > 0 && (
-        <div className="flex items-center gap-3 mb-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5">
-          <span className="text-sm font-medium text-blue-800">{selected.size} selected</span>
+        <div className="flex items-center gap-3 mb-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 rounded-lg px-4 py-2.5">
+          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">{selected.size} selected</span>
           <button
             onClick={() => setSelected(new Set())}
-            className="text-xs text-blue-600 hover:underline"
+            className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
           >
             Clear
           </button>
@@ -507,7 +507,7 @@ export function DeductionsPage() {
               <button
                 key={a}
                 onClick={() => { setBulkAction(a as any); setBulkNotes(''); setBulkResult(null); setShowBulkModal(true) }}
-                className="px-3 py-1.5 text-xs font-medium border border-blue-300 rounded-md bg-white text-blue-700 hover:bg-blue-100 capitalize"
+                className="px-3 py-1.5 text-xs font-medium border border-blue-300 dark:border-blue-500/30 rounded-md bg-panel text-blue-700 dark:text-blue-400 hover:bg-panel-hover capitalize"
               >
                 {a === 'park' ? 'Put On Hold' : a}
               </button>
@@ -517,71 +517,71 @@ export function DeductionsPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+      <div className="bg-panel rounded-lg border border-edge overflow-x-auto">
         <table className="w-full text-sm min-w-[900px]">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
+            <tr className="bg-panel-hover border-b border-edge">
               <th className="px-3 py-2.5 w-8">
                 <input
                   type="checkbox"
                   checked={response ? selected.size === response.data.length && response.data.length > 0 : false}
                   onChange={toggleSelectAll}
-                  className="rounded border-gray-300"
+                  className="rounded border-edge"
                 />
               </th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('id')}>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle cursor-pointer select-none" onClick={() => toggleSort('id')}>
                 <span className="flex items-center">ID <SortIcon field="id" /></span>
               </th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Company</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Retailer</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Reason</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('invoiceNumber')}>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle">Company</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle">Retailer</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle">Reason</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle cursor-pointer select-none" onClick={() => toggleSort('invoiceNumber')}>
                 <span className="flex items-center">Invoice <SortIcon field="invoiceNumber" /></span>
               </th>
-              <th className="text-right px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('amount')}>
+              <th className="text-right px-4 py-2.5 font-medium text-subtle cursor-pointer select-none" onClick={() => toggleSort('amount')}>
                 <span className="flex items-center justify-end">Amount <SortIcon field="amount" /></span>
               </th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('deductedAt')}>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle cursor-pointer select-none" onClick={() => toggleSort('deductedAt')}>
                 <span className="flex items-center">Date <SortIcon field="deductedAt" /></span>
               </th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 cursor-pointer select-none" onClick={() => toggleSort('status')}>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle cursor-pointer select-none" onClick={() => toggleSort('status')}>
                 <span className="flex items-center">Status <SortIcon field="status" /></span>
               </th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">Handled By</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle">Handled By</th>
             </tr>
           </thead>
           <tbody>
             {response?.data.map((d) => {
-              const sc = STATUS_CONFIG[d.status] || { label: d.status, color: 'text-gray-500', bg: 'bg-gray-50' }
+              const sc = STATUS_CONFIG[d.status] || { label: d.status, color: 'text-subtle', bg: 'bg-panel-hover' }
               return (
                 <tr
                   key={d.id}
-                  className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${selected.has(d.id) ? 'bg-blue-50/50' : ''}`}
+                  className={`border-b border-edge-light hover:bg-panel-hover cursor-pointer ${selected.has(d.id) ? 'bg-blue-50/50 dark:bg-blue-500/5' : ''}`}
                 >
                   <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={selected.has(d.id)}
                       onChange={() => toggleSelect(d.id)}
-                      className="rounded border-gray-300"
+                      className="rounded border-edge"
                     />
                   </td>
-                  <td className="px-4 py-2.5 text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>#{d.id}</td>
-                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.company?.name || <span className="text-gray-400">Unknown</span>}</td>
-                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.retailer?.name || <span className="text-gray-400">—</span>}</td>
-                  <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>{d.reason?.label || <span className="text-gray-400">—</span>}</td>
-                  <td className="px-4 py-2.5 font-mono text-xs" onClick={() => navigate(`/deductions/${d.id}`)}>{d.invoiceNumber || '—'}</td>
-                  <td className="px-4 py-2.5 text-right font-mono" onClick={() => navigate(`/deductions/${d.id}`)}>{formatCurrency(d.amount)}</td>
-                  <td className="px-4 py-2.5 text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>{formatDate(d.deductedAt)}</td>
+                  <td className="px-4 py-2.5 text-subtle" onClick={() => navigate(`/deductions/${d.id}`)}>#{d.id}</td>
+                  <td className="px-4 py-2.5 text-prose" onClick={() => navigate(`/deductions/${d.id}`)}>{d.company?.name || <span className="text-faint">Unknown</span>}</td>
+                  <td className="px-4 py-2.5 text-prose" onClick={() => navigate(`/deductions/${d.id}`)}>{d.retailer?.name || <span className="text-faint">—</span>}</td>
+                  <td className="px-4 py-2.5 text-prose" onClick={() => navigate(`/deductions/${d.id}`)}>{d.reason?.label || <span className="text-faint">—</span>}</td>
+                  <td className="px-4 py-2.5 font-mono text-xs text-prose" onClick={() => navigate(`/deductions/${d.id}`)}>{d.invoiceNumber || '—'}</td>
+                  <td className="px-4 py-2.5 text-right font-mono text-prose" onClick={() => navigate(`/deductions/${d.id}`)}>{formatCurrency(d.amount)}</td>
+                  <td className="px-4 py-2.5 text-subtle" onClick={() => navigate(`/deductions/${d.id}`)}>{formatDate(d.deductedAt)}</td>
                   <td className="px-4 py-2.5" onClick={() => navigate(`/deductions/${d.id}`)}>
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${sc.bg} ${sc.color}`}>
                       {sc.label}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-gray-500" onClick={() => navigate(`/deductions/${d.id}`)}>
+                  <td className="px-4 py-2.5 text-xs text-subtle" onClick={() => navigate(`/deductions/${d.id}`)}>
                     {d.handledBy && d.handledBy.length > 0
                       ? d.handledBy.map(u => u.name).join(', ')
-                      : <span className="text-gray-300">—</span>
+                      : <span className="text-faint">—</span>
                     }
                   </td>
                 </tr>
@@ -593,9 +593,9 @@ export function DeductionsPage() {
         {/* Empty State */}
         {response && response.data.length === 0 && (
           <div className="py-12 text-center">
-            <Search size={32} className="mx-auto text-gray-300 mb-3" />
-            <h3 className="text-sm font-medium text-gray-700 mb-1">No deductions found</h3>
-            <p className="text-xs text-gray-500">
+            <Search size={32} className="mx-auto text-faint mb-3" />
+            <h3 className="text-sm font-medium text-prose mb-1">No deductions found</h3>
+            <p className="text-xs text-subtle">
               {search || statusFilter.length > 0 || retailerFilter || dateFrom || dateTo
                 ? 'Try adjusting your filters or search terms.'
                 : 'Create a new deduction or upload a CSV to get started.'}
@@ -604,25 +604,25 @@ export function DeductionsPage() {
         )}
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-          <span className="text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-edge bg-panel-hover">
+          <span className="text-xs text-subtle">
             {response ? `${response.total} total deductions` : ''}
           </span>
           <div className="flex items-center gap-2">
             <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="p-1 rounded border border-gray-200 bg-white disabled:opacity-40"
+              className="p-1 rounded border border-edge bg-panel disabled:opacity-40"
             >
               <ChevronLeft size={14} />
             </button>
-            <span className="text-xs text-gray-600">
+            <span className="text-xs text-prose">
               Page {page} of {totalPages}
             </span>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="p-1 rounded border border-gray-200 bg-white disabled:opacity-40"
+              className="p-1 rounded border border-edge bg-panel disabled:opacity-40"
             >
               <ChevronRight size={14} />
             </button>
@@ -634,17 +634,17 @@ export function DeductionsPage() {
       {showNewForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowNewForm(false)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-              <h3 className="text-base font-semibold text-gray-900">New Deduction</h3>
-              <button onClick={() => setShowNewForm(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="relative bg-panel rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-edge">
+              <h3 className="text-base font-semibold text-heading">New Deduction</h3>
+              <button onClick={() => setShowNewForm(false)} className="text-faint hover:text-prose">
                 <X size={18} />
               </button>
             </div>
 
             <div className="px-5 py-4 space-y-3">
               {formError && (
-                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                <div className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-md px-3 py-2">
                   <AlertCircle size={14} /> {formError}
                 </div>
               )}
@@ -696,14 +696,14 @@ export function DeductionsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Amount *</label>
+                  <label className="text-xs font-medium text-subtle mb-1 block">Amount *</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-faint text-sm">$</span>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
-                      className="w-full text-sm border border-gray-200 rounded-md pl-7 pr-3 py-2"
+                      className="w-full text-sm border border-edge rounded-md pl-7 pr-3 py-2 bg-input-bg text-heading"
                       value={newAmount}
                       onChange={(e) => setNewAmount(e.target.value)}
                       placeholder="0.00"
@@ -711,10 +711,10 @@ export function DeductionsPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Deduction Date *</label>
+                  <label className="text-xs font-medium text-subtle mb-1 block">Deduction Date *</label>
                   <input
                     type="date"
-                    className="w-full text-sm border border-gray-200 rounded-md px-3 py-2"
+                    className="w-full text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
                   />
@@ -722,21 +722,21 @@ export function DeductionsPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Invoice Number</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Invoice Number</label>
                 <input
                   type="text"
-                  className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 uppercase"
+                  className="w-full text-sm border border-edge rounded-md px-3 py-2 uppercase bg-input-bg text-heading"
                   value={newInvoice}
                   onChange={(e) => setNewInvoice(e.target.value.toUpperCase().replace(/[^A-Z0-9\-]/g, ''))}
                   placeholder="e.g. INV-12345"
                 />
-                <p className="text-[10px] text-gray-400 mt-0.5">Letters, numbers, and hyphens only</p>
+                <p className="text-[10px] text-faint mt-0.5">Letters, numbers, and hyphens only</p>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Notes</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Notes</label>
                 <textarea
-                  className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 resize-none"
+                  className="w-full text-sm border border-edge rounded-md px-3 py-2 resize-none bg-input-bg text-heading"
                   rows={2}
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
@@ -745,31 +745,31 @@ export function DeductionsPage() {
               </div>
 
               {duplicateWarning.length > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-md p-3 space-y-1.5">
-                  <p className="text-xs font-medium text-amber-800 flex items-center gap-1.5">
+                <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 rounded-md p-3 space-y-1.5">
+                  <p className="text-xs font-medium text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
                     <AlertCircle size={12} /> Possible duplicate{duplicateWarning.length > 1 ? 's' : ''} found
                   </p>
                   {duplicateWarning.map((d) => (
-                    <p key={d.id} className="text-xs text-amber-700">
+                    <p key={d.id} className="text-xs text-amber-700 dark:text-amber-400">
                       #{d.id} — {d.retailer?.name || 'Unknown'} — {formatCurrency(d.amount)} — {d.invoiceNumber || 'No invoice'} — <span className="capitalize">{d.status.replace(/_/g, ' ')}</span>
                     </p>
                   ))}
-                  <p className="text-xs text-amber-600">Click "Create Anyway" to proceed, or cancel and review.</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400">Click "Create Anyway" to proceed, or cancel and review.</p>
                 </div>
               )}
             </div>
 
-            <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-edge-light bg-panel-hover">
               <button
                 onClick={() => setShowNewForm(false)}
-                className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+                className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
               >
                 Cancel
               </button>
               <button
                 disabled={formLoading}
                 onClick={handleCreateDeduction}
-                className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 transition-colors"
               >
                 {formLoading ? 'Creating...' : duplicateWarning.length > 0 ? 'Create Anyway' : 'Create Deduction'}
               </button>
@@ -782,28 +782,30 @@ export function DeductionsPage() {
       {showBulkModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowBulkModal(false)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-              <h3 className="text-base font-semibold text-gray-900 capitalize">
+          <div className="relative bg-panel rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-edge">
+              <h3 className="text-base font-semibold text-heading capitalize">
                 Bulk {bulkAction === 'park' ? 'Put On Hold' : bulkAction} — {selected.size} deduction{selected.size !== 1 ? 's' : ''}
               </h3>
-              <button onClick={() => setShowBulkModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowBulkModal(false)} className="text-faint hover:text-prose">
                 <X size={18} />
               </button>
             </div>
             <div className="px-5 py-4 space-y-3">
               {bulkResult && (
                 <div className={`flex items-center gap-2 text-sm rounded-md px-3 py-2 border ${
-                  bulkResult.type === 'success' ? 'text-green-700 bg-green-50 border-green-200' : 'text-red-600 bg-red-50 border-red-200'
+                  bulkResult.type === 'success'
+                    ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/25'
+                    : 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/25'
                 }`}>
                   {bulkResult.type === 'success' ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
                   {bulkResult.message}
                 </div>
               )}
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Notes *</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Notes *</label>
                 <textarea
-                  className={`w-full text-sm border rounded-md px-3 py-2 resize-none ${!bulkNotes.trim() ? 'border-red-300' : 'border-gray-200'}`}
+                  className={`w-full text-sm border rounded-md px-3 py-2 resize-none bg-input-bg text-heading ${!bulkNotes.trim() ? 'border-red-300 dark:border-red-500/30' : 'border-edge'}`}
                   rows={3}
                   value={bulkNotes}
                   onChange={(e) => setBulkNotes(e.target.value)}
@@ -811,17 +813,17 @@ export function DeductionsPage() {
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-edge-light bg-panel-hover">
               <button
                 onClick={() => setShowBulkModal(false)}
-                className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+                className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
               >
                 Cancel
               </button>
               <button
                 disabled={bulkLoading || !bulkNotes.trim()}
                 onClick={handleBulkAction}
-                className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 capitalize"
+                className="px-4 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 capitalize transition-colors"
               >
                 {bulkLoading ? 'Processing...' : `${bulkAction === 'park' ? 'Put On Hold' : bulkAction} ${selected.size} Deduction${selected.size !== 1 ? 's' : ''}`}
               </button>
@@ -834,12 +836,12 @@ export function DeductionsPage() {
       {showUpload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => { setShowUpload(false); setUploadResult(null); setCsvPreview(null); setCsvError('') }} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-              <h3 className="text-base font-semibold text-gray-900">
+          <div className="relative bg-panel rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-edge">
+              <h3 className="text-base font-semibold text-heading">
                 {csvPreview ? `Preview — ${csvPreview.length} row${csvPreview.length !== 1 ? 's' : ''}` : 'Upload CSV'}
               </h3>
-              <button onClick={() => { setShowUpload(false); setUploadResult(null); setCsvPreview(null); setCsvError('') }} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => { setShowUpload(false); setUploadResult(null); setCsvPreview(null); setCsvError('') }} className="text-faint hover:text-prose">
                 <X size={18} />
               </button>
             </div>
@@ -847,20 +849,20 @@ export function DeductionsPage() {
             <div className="px-5 py-4 space-y-4 overflow-y-auto flex-1">
               {!csvPreview ? (
                 <>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-prose">
                     Upload a CSV file with deductions. You'll preview the data before importing.
                   </p>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
-                    <p className="text-xs font-medium text-gray-700 mb-2">Required columns:</p>
-                    <code className="text-xs text-gray-600 block">company_id, retailer_id, amount, deducted_at</code>
-                    <p className="text-xs font-medium text-gray-700 mt-2 mb-1">Optional columns:</p>
-                    <code className="text-xs text-gray-600 block">reason_id, invoice_number, notes</code>
+                  <div className="bg-panel-hover border border-edge rounded-md p-3">
+                    <p className="text-xs font-medium text-prose mb-2">Required columns:</p>
+                    <code className="text-xs text-subtle block">company_id, retailer_id, amount, deducted_at</code>
+                    <p className="text-xs font-medium text-prose mt-2 mb-1">Optional columns:</p>
+                    <code className="text-xs text-subtle block">reason_id, invoice_number, notes</code>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
-                    <p className="text-xs font-medium text-gray-700 mb-2">Valid IDs to use:</p>
-                    <div className="text-xs text-gray-600 space-y-1">
+                  <div className="bg-panel-hover border border-edge rounded-md p-3">
+                    <p className="text-xs font-medium text-prose mb-2">Valid IDs to use:</p>
+                    <div className="text-xs text-subtle space-y-1">
                       <p><strong>Companies:</strong> {companies.map(c => `${c.id} (${c.name})`).join(', ')}</p>
                       <p><strong>Retailers:</strong> {retailers.map(r => `${r.id} (${r.name})`).join(', ')}</p>
                       <p><strong>Reasons:</strong> {reasons.map(r => `${r.id} (${r.label})`).join(', ')}</p>
@@ -868,7 +870,7 @@ export function DeductionsPage() {
                   </div>
 
                   {csvError && (
-                    <div className="flex items-start gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                    <div className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-md px-3 py-2">
                       <AlertCircle size={14} className="mt-0.5 shrink-0" />
                       <pre className="whitespace-pre-wrap text-xs">{csvError}</pre>
                     </div>
@@ -877,8 +879,8 @@ export function DeductionsPage() {
                   {uploadResult && (
                     <div className={`flex items-start gap-2 text-sm rounded-md px-3 py-2 border ${
                       uploadResult.type === 'success'
-                        ? 'text-green-700 bg-green-50 border-green-200'
-                        : 'text-red-600 bg-red-50 border-red-200'
+                        ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/25'
+                        : 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/25'
                     }`}>
                       {uploadResult.type === 'success' ? <CheckCircle size={14} className="mt-0.5" /> : <AlertCircle size={14} className="mt-0.5" />}
                       <span>{uploadResult.message}</span>
@@ -898,7 +900,7 @@ export function DeductionsPage() {
                     />
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-gray-400 hover:bg-gray-50"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-edge rounded-lg text-sm text-subtle hover:border-faint hover:bg-panel-hover transition-colors"
                     >
                       <Upload size={16} /> Choose CSV file
                     </button>
@@ -906,30 +908,30 @@ export function DeductionsPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-prose">
                     Review the data below. All entries will be created with <strong>Open</strong> status. Invoice numbers are auto-normalized.
                   </p>
-                  <div className="border border-gray-200 rounded-md overflow-x-auto">
+                  <div className="border border-edge rounded-md overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="bg-gray-50 border-b border-gray-200">
-                          <th className="text-left px-3 py-2 font-medium text-gray-600">#</th>
-                          <th className="text-left px-3 py-2 font-medium text-gray-600">Company</th>
-                          <th className="text-left px-3 py-2 font-medium text-gray-600">Retailer</th>
-                          <th className="text-right px-3 py-2 font-medium text-gray-600">Amount</th>
-                          <th className="text-left px-3 py-2 font-medium text-gray-600">Date</th>
-                          <th className="text-left px-3 py-2 font-medium text-gray-600">Invoice</th>
+                        <tr className="bg-panel-hover border-b border-edge">
+                          <th className="text-left px-3 py-2 font-medium text-subtle">#</th>
+                          <th className="text-left px-3 py-2 font-medium text-subtle">Company</th>
+                          <th className="text-left px-3 py-2 font-medium text-subtle">Retailer</th>
+                          <th className="text-right px-3 py-2 font-medium text-subtle">Amount</th>
+                          <th className="text-left px-3 py-2 font-medium text-subtle">Date</th>
+                          <th className="text-left px-3 py-2 font-medium text-subtle">Invoice</th>
                         </tr>
                       </thead>
                       <tbody>
                         {csvPreview.map((row, i) => (
-                          <tr key={i} className="border-b border-gray-100">
-                            <td className="px-3 py-1.5 text-gray-400">{i + 1}</td>
-                            <td className="px-3 py-1.5">{companies.find(c => c.id === row.company_id)?.name || row.company_id}</td>
-                            <td className="px-3 py-1.5">{retailers.find(r => r.id === row.retailer_id)?.name || row.retailer_id}</td>
-                            <td className="px-3 py-1.5 text-right font-mono">${row.amount.toFixed(2)}</td>
-                            <td className="px-3 py-1.5">{row.deducted_at}</td>
-                            <td className="px-3 py-1.5 font-mono">{row.invoice_number || '—'}</td>
+                          <tr key={i} className="border-b border-edge-light">
+                            <td className="px-3 py-1.5 text-faint">{i + 1}</td>
+                            <td className="px-3 py-1.5 text-prose">{companies.find(c => c.id === row.company_id)?.name || row.company_id}</td>
+                            <td className="px-3 py-1.5 text-prose">{retailers.find(r => r.id === row.retailer_id)?.name || row.retailer_id}</td>
+                            <td className="px-3 py-1.5 text-right font-mono text-prose">${row.amount.toFixed(2)}</td>
+                            <td className="px-3 py-1.5 text-prose">{row.deducted_at}</td>
+                            <td className="px-3 py-1.5 font-mono text-prose">{row.invoice_number || '—'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -939,19 +941,19 @@ export function DeductionsPage() {
               )}
             </div>
 
-            <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-edge-light bg-panel-hover">
               {csvPreview ? (
                 <>
                   <button
                     onClick={() => setCsvPreview(null)}
-                    className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+                    className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
                   >
                     Back
                   </button>
                   <button
                     disabled={uploadLoading}
                     onClick={handleCSVConfirm}
-                    className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
+                    className="px-4 py-2 text-sm bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 transition-colors"
                   >
                     {uploadLoading ? 'Importing...' : `Import ${csvPreview.length} Deduction${csvPreview.length !== 1 ? 's' : ''}`}
                   </button>
@@ -959,7 +961,7 @@ export function DeductionsPage() {
               ) : (
                 <button
                   onClick={() => { setShowUpload(false); setUploadResult(null); setCsvError('') }}
-                  className="px-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-100"
+                  className="px-4 py-2 text-sm text-prose border border-edge rounded-md hover:bg-panel-hover"
                 >
                   Close
                 </button>

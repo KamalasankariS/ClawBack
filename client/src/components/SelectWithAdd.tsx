@@ -46,14 +46,14 @@ export function SelectWithAdd({
 
   return (
     <div>
-      <label className="text-xs font-medium text-gray-500 mb-1 block">
+      <label className="text-xs font-medium text-subtle mb-1 block">
         {label}{required && ' *'}
       </label>
 
       {!showAddForm ? (
         <div className="flex gap-1.5">
           <select
-            className="flex-1 text-sm border border-gray-200 rounded-md px-3 py-2 bg-white"
+            className="flex-1 text-sm border border-edge rounded-md px-3 py-2 bg-input-bg text-heading"
             value={value}
             onChange={(e) => {
               if (e.target.value === '__add__') {
@@ -67,18 +67,18 @@ export function SelectWithAdd({
             {options.map((o) => (
               <option key={o.id} value={o.id}>{o.name || o.label}</option>
             ))}
-            <option value="__add__">＋ {addLabel}</option>
+            <option value="__add__">+ {addLabel}</option>
           </select>
         </div>
       ) : (
-        <div className="border border-gray-200 rounded-md p-2.5 bg-gray-50 space-y-2">
+        <div className="border border-edge rounded-md p-2.5 bg-panel-hover space-y-2">
           <div className="flex items-center gap-1.5">
-            <Plus size={12} className="text-gray-400" />
-            <span className="text-xs font-medium text-gray-600">{addLabel}</span>
+            <Plus size={12} className="text-faint" />
+            <span className="text-xs font-medium text-prose">{addLabel}</span>
           </div>
           <input
             type="text"
-            className="w-full text-sm border border-gray-200 rounded px-3 py-1.5 bg-white"
+            className="w-full text-sm border border-edge rounded px-3 py-1.5 bg-input-bg text-heading"
             placeholder={`Enter ${label.toLowerCase()} name...`}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -86,19 +86,19 @@ export function SelectWithAdd({
             autoFocus
           />
           {error && (
-            <p className="text-xs text-red-600">{error}</p>
+            <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
           )}
           <div className="flex gap-1.5">
             <button
               onClick={() => { setShowAddForm(false); setNewName(''); setError('') }}
-              className="flex-1 flex items-center justify-center gap-1 px-2 py-1 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-100"
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1 text-xs text-prose border border-edge rounded hover:bg-panel-hover"
             >
               <X size={10} /> Cancel
             </button>
             <button
               disabled={adding || !newName.trim()}
               onClick={handleAdd}
-              className="flex-1 flex items-center justify-center gap-1 px-2 py-1 text-xs bg-gray-900 text-white rounded hover:bg-gray-800 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1 text-xs bg-accent text-white rounded hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
               <Plus size={10} /> {adding ? 'Adding...' : 'Add'}
             </button>

@@ -57,21 +57,21 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full max-w-sm mx-4 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-200">
-          <h1 className="text-lg font-semibold text-gray-900">Confido</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Deduction Recovery Tool</p>
+    <div className="flex items-center justify-center min-h-screen bg-surface">
+      <div className="bg-panel rounded-xl shadow-lg border border-edge w-full max-w-sm mx-4 overflow-hidden">
+        <div className="px-6 py-5 border-b border-edge">
+          <h1 className="text-lg font-semibold text-heading">Confido</h1>
+          <p className="text-sm text-subtle mt-0.5">Deduction Recovery Tool</p>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {/* Toggle */}
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+          <div className="flex rounded-lg border border-edge overflow-hidden">
             <button
               type="button"
               onClick={() => { setMode('login'); setError('') }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium transition-colors ${
-                mode === 'login' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+                mode === 'login' ? 'bg-accent text-white' : 'bg-panel text-subtle hover:bg-panel-hover'
               }`}
             >
               <LogIn size={14} /> Sign In
@@ -80,7 +80,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
               type="button"
               onClick={() => { setMode('register'); setError('') }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium transition-colors ${
-                mode === 'register' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+                mode === 'register' ? 'bg-accent text-white' : 'bg-panel text-subtle hover:bg-panel-hover'
               }`}
             >
               <UserPlus size={14} /> Register
@@ -88,7 +88,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            <div className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-md px-3 py-2">
               <AlertCircle size={14} className="shrink-0" /> {error}
             </div>
           )}
@@ -96,22 +96,22 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
           {mode === 'register' && (
             <>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Full Name</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Full Name</label>
                 <input
                   type="text"
                   required
-                  className="w-full text-sm border border-gray-200 rounded-md px-3 py-2.5"
+                  className="w-full text-sm border border-edge rounded-md px-3 py-2.5 bg-input-bg text-heading"
                   placeholder="Jane Smith"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Employee ID</label>
+                <label className="text-xs font-medium text-subtle mb-1 block">Employee ID</label>
                 <input
                   type="text"
                   required
-                  className="w-full text-sm border border-gray-200 rounded-md px-3 py-2.5 uppercase"
+                  className="w-full text-sm border border-edge rounded-md px-3 py-2.5 uppercase bg-input-bg text-heading"
                   placeholder="EMP-001"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
@@ -121,11 +121,11 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
           )}
 
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Work Email</label>
+            <label className="text-xs font-medium text-subtle mb-1 block">Work Email</label>
             <input
               type="email"
               required
-              className="w-full text-sm border border-gray-200 rounded-md px-3 py-2.5"
+              className="w-full text-sm border border-edge rounded-md px-3 py-2.5 bg-input-bg text-heading"
               placeholder="you@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -133,11 +133,11 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
           </div>
 
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Password</label>
+            <label className="text-xs font-medium text-subtle mb-1 block">Password</label>
             <input
               type="password"
               required
-              className="w-full text-sm border border-gray-200 rounded-md px-3 py-2.5"
+              className="w-full text-sm border border-edge rounded-md px-3 py-2.5 bg-input-bg text-heading"
               placeholder={mode === 'register' ? 'Create a strong password' : 'Enter your password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -147,7 +147,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
                 {PASSWORD_RULES.map((rule) => {
                   const passes = rule.test(password)
                   return (
-                    <div key={rule.label} className={`flex items-center gap-1.5 text-xs ${passes ? 'text-green-600' : 'text-gray-400'}`}>
+                    <div key={rule.label} className={`flex items-center gap-1.5 text-xs ${passes ? 'text-green-600 dark:text-green-400' : 'text-faint'}`}>
                       {passes ? <Check size={10} /> : <X size={10} />}
                       {rule.label}
                     </div>
@@ -160,7 +160,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
           <button
             type="submit"
             disabled={loading || (mode === 'register' && !allRulesPass)}
-            className="w-full py-2.5 text-sm font-medium bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
+            className="w-full py-2.5 text-sm font-medium bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
             {loading
               ? (mode === 'login' ? 'Signing in...' : 'Creating account...')

@@ -30,12 +30,12 @@ const FIELD_LABELS: Record<string, string> = {
 }
 
 const FIELD_COLORS: Record<string, string> = {
-  retailer_name: 'bg-purple-50 text-purple-700 border-purple-200',
-  amount: 'bg-green-50 text-green-700 border-green-200',
-  deducted_at: 'bg-blue-50 text-blue-700 border-blue-200',
-  status: 'bg-orange-50 text-orange-700 border-orange-200',
-  reason: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-  company_id: 'bg-red-50 text-red-700 border-red-200',
+  retailer_name: 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/25',
+  amount: 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/25',
+  deducted_at: 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/25',
+  status: 'bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/25',
+  reason: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-500/25',
+  company_id: 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25',
 }
 
 function describeChange(_field: string, rule: string, rawValue: string | null, cleanedValue: string | null): string {
@@ -107,10 +107,10 @@ export function ImportAuditPage() {
     <div>
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-1">
-          <ShieldCheck size={20} className="text-blue-600" />
-          <h2 className="text-xl font-semibold text-gray-900">Data Cleanup Report</h2>
+          <ShieldCheck size={20} className="text-accent-text" />
+          <h2 className="text-xl font-semibold text-heading">Data Cleanup Report</h2>
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-subtle">
           When deductions were imported from the spreadsheet, the system automatically fixed formatting issues.
           This report shows every correction so you can verify nothing was changed incorrectly.
         </p>
@@ -120,13 +120,13 @@ export function ImportAuditPage() {
       <div className="grid grid-cols-6 gap-3 mb-5">
         {Object.entries(FIELD_LABELS).map(([field, label]) => {
           const count = fieldCounts[field] || 0
-          const colors = FIELD_COLORS[field] || 'bg-gray-50 text-gray-700 border-gray-200'
+          const colors = FIELD_COLORS[field] || 'bg-panel-hover text-prose border-edge'
           return (
             <button
               key={field}
               onClick={() => { setFieldFilter(fieldFilter === field ? '' : field); setPage(1) }}
               className={`rounded-lg border px-3 py-2 text-left transition-all ${
-                fieldFilter === field ? colors + ' ring-2 ring-offset-1 ring-blue-400' : 'bg-white border-gray-200 hover:border-gray-300'
+                fieldFilter === field ? colors + ' ring-2 ring-offset-1 ring-accent/40' : 'bg-panel border-edge hover:border-faint'
               }`}
             >
               <div className="text-lg font-bold">{count}</div>
@@ -139,11 +139,11 @@ export function ImportAuditPage() {
       {/* Filters */}
       <div className="flex items-center gap-3 mb-4">
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
           <input
             type="text"
             placeholder="Search by deduction #..."
-            className="text-sm border border-gray-200 rounded-md pl-8 pr-3 py-2 bg-white w-56"
+            className="text-sm border border-edge rounded-md pl-8 pr-3 py-2 bg-input-bg text-heading w-56"
             value={deductionIdFilter}
             onChange={(e) => { setDeductionIdFilter(e.target.value); setPage(1) }}
           />
@@ -151,36 +151,36 @@ export function ImportAuditPage() {
         {(deductionIdFilter || fieldFilter) && (
           <button
             onClick={() => { setDeductionIdFilter(''); setFieldFilter(''); setPage(1) }}
-            className="text-xs text-blue-600 hover:underline"
+            className="text-xs text-accent-text hover:underline"
           >
             Clear filters
           </button>
         )}
-        <span className="text-xs text-gray-400 ml-auto">
+        <span className="text-xs text-faint ml-auto">
           {response ? `${response.total} corrections found` : ''}
         </span>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-panel rounded-lg border border-edge overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 w-24">Deduction</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 w-28">Field</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600">What Changed</th>
-              <th className="text-left px-4 py-2.5 font-medium text-gray-600 w-72">Before → After</th>
+            <tr className="bg-panel-hover border-b border-edge">
+              <th className="text-left px-4 py-2.5 font-medium text-subtle w-24">Deduction</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle w-28">Field</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle">What Changed</th>
+              <th className="text-left px-4 py-2.5 font-medium text-subtle w-72">Before → After</th>
             </tr>
           </thead>
           <tbody>
             {response?.data.map((a) => {
-              const colors = FIELD_COLORS[a.field] || 'bg-gray-50 text-gray-600 border-gray-200'
+              const colors = FIELD_COLORS[a.field] || 'bg-panel-hover text-subtle border-edge'
               return (
-                <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={a.id} className="border-b border-edge-light hover:bg-panel-hover">
                   <td className="px-4 py-2.5">
                     <button
                       onClick={() => navigate(`/deductions/${a.deductionId}`)}
-                      className="text-blue-600 hover:underline font-medium"
+                      className="text-accent-text hover:underline font-medium"
                     >
                       #{a.deductionId}
                     </button>
@@ -190,16 +190,16 @@ export function ImportAuditPage() {
                       {FIELD_LABELS[a.field] || a.field}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-gray-700 text-sm">
+                  <td className="px-4 py-2.5 text-prose text-sm">
                     {describeChange(a.field, a.rule, a.rawValue, a.cleanedValue)}
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 text-xs font-mono">
-                      <span className="text-red-500 bg-red-50 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.rawValue || ''}>
+                      <span className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.rawValue || ''}>
                         {a.rawValue || '(empty)'}
                       </span>
-                      <ArrowRight size={12} className="text-gray-400 flex-shrink-0" />
-                      <span className="text-green-600 bg-green-50 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.cleanedValue || ''}>
+                      <ArrowRight size={12} className="text-faint flex-shrink-0" />
+                      <span className="text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-1.5 py-0.5 rounded max-w-28 truncate" title={a.cleanedValue || ''}>
                         {a.cleanedValue || '(cleared)'}
                       </span>
                     </div>
@@ -209,8 +209,8 @@ export function ImportAuditPage() {
             })}
             {response?.data.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-gray-400">
-                  <FileWarning size={24} className="mx-auto mb-2 text-gray-300" />
+                <td colSpan={4} className="px-4 py-8 text-center text-faint">
+                  <FileWarning size={24} className="mx-auto mb-2 text-faint" />
                   No corrections found matching your filters.
                 </td>
               </tr>
@@ -218,23 +218,23 @@ export function ImportAuditPage() {
           </tbody>
         </table>
 
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-          <span className="text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-edge bg-panel-hover">
+          <span className="text-xs text-subtle">
             Showing page {page} of {totalPages}
           </span>
           <div className="flex items-center gap-2">
             <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="p-1 rounded border border-gray-200 bg-white disabled:opacity-40"
+              className="p-1 rounded border border-edge bg-panel disabled:opacity-40"
             >
               <ChevronLeft size={14} />
             </button>
-            <span className="text-xs text-gray-600">{page} / {totalPages}</span>
+            <span className="text-xs text-prose">{page} / {totalPages}</span>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="p-1 rounded border border-gray-200 bg-white disabled:opacity-40"
+              className="p-1 rounded border border-edge bg-panel disabled:opacity-40"
             >
               <ChevronRight size={14} />
             </button>
