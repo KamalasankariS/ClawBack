@@ -4,31 +4,27 @@
 
 A tool that helps analysts track, dispute, and recover retailer deductions — replacing messy spreadsheets with a clean workflow and real-time recovery metrics.
 
-<!-- TODO: Add Loom demo video here -->
+[Watch the demo video (Loom)](https://www.loom.com/share/e508d4145b9542bc910b91e78f959956)
 
 ---
 
 ## How to Run
 
-**You need:** [Node.js 18+](https://nodejs.org/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+**Step 1.** Install [Node.js 18+](https://nodejs.org/) — pick your OS and download the installer.
+
+![Install Node.js](docs/images/03-install-nodejs.jpeg)
+![Select your OS](docs/images/04-nodejs-select-os.jpeg)
+
+**Step 2.** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+![Install Docker Desktop](docs/images/05-install-docker.jpeg)
 
 > **Windows users:** Open PowerShell as Administrator and run `wsl --install`, then restart your PC. Use the WSL terminal for all commands below.
+>
+> ![WSL install](docs/images/01-wsl-install.jpeg)
+> ![WSL provisioning](docs/images/02-wsl-provisioning.jpeg)
 
-### Option 1: One-word setup
-
-Add this alias to your `~/.zshrc` (or `~/.bash_profile`):
-
-```bash
-alias confido='cd "/path/to/confido" && ./start.sh'
-```
-
-Then just type:
-
-```bash
-confido
-```
-
-### Option 2: Run from the project folder
+**Step 3.** Clone the repo and run the start script.
 
 ```bash
 git clone https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project.git
@@ -36,9 +32,37 @@ cd Confido-Deduction-Recovery-Project
 ./start.sh
 ```
 
-The app opens automatically at **http://localhost:5173**. Press `Ctrl+C` to stop.
+![Clone the repo](docs/images/06-git-clone.jpeg)
 
-On first launch, create your account with your name, employee ID, work email, and a password.
+The script starts PostgreSQL, installs dependencies, seeds the data, and launches the app.
+
+![PostgreSQL starting](docs/images/07-start-sh-postgres.jpeg)
+![Seed complete and running](docs/images/08-seed-and-running.jpeg)
+
+**Step 4.** The app opens at **http://localhost:5173**. Create your account with your name, employee ID, work email, and a password.
+
+![Login page](docs/images/09-login-page.jpeg)
+
+You're in! Here's what you'll see:
+
+![Dashboard](docs/images/10-dashboard.jpeg)
+![Deductions list](docs/images/11-deductions-list.jpeg)
+![Sort and filter](docs/images/12-deductions-sort.jpeg)
+![New deduction form](docs/images/13-new-deduction.jpeg)
+
+Press `Ctrl+C` to stop the app.
+
+<details>
+<summary>One-word setup (optional)</summary>
+
+Add this alias to your `~/.zshrc` (or `~/.bash_profile`):
+
+```bash
+alias confido='cd "/path/to/confido" && ./start.sh'
+```
+
+Then just type `confido` to launch.
+</details>
 
 <details>
 <summary>Manual setup (if start.sh doesn't work)</summary>
