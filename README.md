@@ -96,6 +96,22 @@ cd client && npm install && npm run dev
 
 ---
 
+## Results
+
+**Data Pipeline Performance** — The ETL pipeline ingests 1,007 raw financial records containing 57 retailer name variants, 7 date formats, 5+ amount formats, and 21 status labels. It normalizes everything into clean, canonical form while generating 4,664 audit log entries — an average of 4.6 traceable transformations per record, with zero data loss.
+
+| Metric | Raw | Cleaned |
+|--------|-----|---------|
+| Retailer name variants | 57 | 14 canonical (4.1x reduction) |
+| Date formats | 7 different formats | 1 (ISO Date) |
+| Status labels | 21 variants | 4 canonical states |
+| Amount formats | 5+ (currency, accounting, placeholders) | Numeric |
+| Orphan foreign keys | 16% of records | Flagged in audit log |
+| Soft-deleted records | 15% of records | Hidden from views, preserved in DB |
+| Records requiring cleaning | 100% | All cleaned automatically |
+
+---
+
 ## Assumptions
 
 - **Authentication** — Analysts register with a work email, employee ID, name, and a strong password (8+ chars, uppercase, lowercase, number, special character). Sessions last 7 days. No SSO/OAuth.
