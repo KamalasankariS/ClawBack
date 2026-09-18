@@ -60,7 +60,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
     <div className="flex items-center justify-center min-h-screen bg-surface">
       <div className="bg-panel rounded-xl shadow-lg border border-edge w-full max-w-sm mx-4 overflow-hidden">
         <div className="px-6 py-5 border-b border-edge">
-          <h1 className="text-lg font-semibold text-heading">Confido</h1>
+          <h1 className="text-lg font-semibold text-heading">ClawBack</h1>
           <p className="text-sm text-subtle mt-0.5">Deduction Recovery Tool</p>
         </div>
 

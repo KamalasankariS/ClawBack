@@ -8,7 +8,7 @@ describe('Deductions API', () => {
   let testDeductionId: number;
   let companyId: number;
   let retailerId: number;
-  const testEmail = `ded_test_${Date.now()}@confido.com`;
+  const testEmail = `ded_test_${Date.now()}@clawback.test`;
   const cleanupIds: number[] = [];
 
   beforeAll(async () => {

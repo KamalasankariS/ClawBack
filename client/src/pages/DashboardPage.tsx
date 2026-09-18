@@ -48,10 +48,10 @@ interface TrendPoint {
 
 // Fixed colors for the original 4 companies, then generated distinct colors for new ones
 const BASE_COMPANY_COLORS: Record<string, string> = {
-  'Cascade Snacks Co.': '#e8913a',   // orange
-  'Northfield Beverage': '#4a7c59',  // green
-  'Harbor & Vine Foods': '#d94545',  // red
-  'Sunbelt Organics': '#5b8abf',     // blue
+  'Pinnacle Provisions Inc.': '#e8913a',   // orange
+  'Ridgeline Beverages': '#4a7c59',       // green
+  'Ember & Oak Foods': '#d94545',         // red
+  'Coastal Naturals': '#5b8abf',          // blue
 }
 
 // Generate a distinct hue-spaced color that avoids the 4 base hues (orange~30, green~140, red~0, blue~215)

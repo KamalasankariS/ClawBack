@@ -12,7 +12,7 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo ""
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}   Confido — Deduction Recovery Tool    ${NC}"
+echo -e "${CYAN}   ClawBack — Deduction Recovery Tool    ${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 
@@ -55,7 +55,7 @@ else
   sleep 3
   # Wait until postgres accepts connections
   for i in {1..20}; do
-    if docker compose exec -T db pg_isready -U confido &> /dev/null; then
+    if docker compose exec -T db pg_isready -U clawback &> /dev/null; then
       break
     fi
     sleep 1
@@ -89,7 +89,7 @@ cd "$ROOT_DIR/server"
 
 # Create .env if missing
 if [ ! -f ".env" ]; then
-  echo 'DATABASE_URL="postgresql://confido:confido@localhost:5433/confido?schema=public"' > .env
+  echo 'DATABASE_URL="postgresql://clawback:clawback@localhost:5433/clawback?schema=public"' > .env
   echo -e "  Created .env ${GREEN}OK${NC}"
 fi
 
@@ -101,7 +101,7 @@ echo -e "  Database migrated ${GREEN}OK${NC}"
 # ─── 5. Seed data (only if empty) ───
 echo -e "${YELLOW}[5/6] Checking seed data...${NC}"
 
-DEDUCTION_COUNT=$(docker compose -f "$ROOT_DIR/docker-compose.yml" exec -T db psql -U confido -t -c "SELECT COUNT(*) FROM deductions;" 2>/dev/null | tr -d ' ' || echo "0")
+DEDUCTION_COUNT=$(docker compose -f "$ROOT_DIR/docker-compose.yml" exec -T db psql -U clawback -t -c "SELECT COUNT(*) FROM deductions;" 2>/dev/null | tr -d ' ' || echo "0")
 
 if [ "$DEDUCTION_COUNT" = "0" ] || [ -z "$DEDUCTION_COUNT" ]; then
   echo -e "  Database is empty — seeding 1,000+ deductions..."
@@ -113,7 +113,7 @@ else
 fi
 
 # ─── 6. Start the app ───
-echo -e "${YELLOW}[6/6] Starting Confido...${NC}"
+echo -e "${YELLOW}[6/6] Starting ClawBack...${NC}"
 echo ""
 
 # Cleanup function to kill background processes
@@ -122,7 +122,7 @@ cleanup() {
   echo -e "${YELLOW}Shutting down...${NC}"
   kill $SERVER_PID $CLIENT_PID 2>/dev/null
   wait $SERVER_PID $CLIENT_PID 2>/dev/null
-  echo -e "${GREEN}Confido stopped.${NC}"
+  echo -e "${GREEN}ClawBack stopped.${NC}"
   exit 0
 }
 trap cleanup SIGINT SIGTERM
@@ -140,7 +140,7 @@ CLIENT_PID=$!
 sleep 3
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Confido is running!${NC}"
+echo -e "${GREEN}  ClawBack is running!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  App:      ${CYAN}http://localhost:5173${NC}"

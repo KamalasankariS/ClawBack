@@ -4,7 +4,7 @@ import app from '../app.js';
 import { prisma } from '../lib/prisma.js';
 
 describe('Auth API', () => {
-  const testEmail = `test_${Date.now()}@confido.com`;
+  const testEmail = `test_${Date.now()}@clawback.test`;
   const testEmpId = `TST-${Date.now()}`;
   let token: string;
 
@@ -78,7 +78,7 @@ describe('Auth API', () => {
   it('rejects duplicate employee ID', async () => {
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: `diff_${Date.now()}@confido.com`, employeeId: testEmpId, name: 'Test', password: 'Strong_1234' });
+      .send({ email: `diff_${Date.now()}@clawback.test`, employeeId: testEmpId, name: 'Test', password: 'Strong_1234' });
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/employee ID/i);
   });
@@ -95,7 +95,7 @@ describe('Auth API', () => {
   it('rejects login with nonexistent email', async () => {
     const res = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'nonexistent@confido.com', password: 'Strong_1234' });
+      .send({ email: 'nonexistent@clawback.test', password: 'Strong_1234' });
     expect(res.status).toBe(401);
   });
 

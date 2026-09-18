@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const location = useLocation()
   const { theme, toggle } = useTheme()
   const [companies, setCompanies] = useState<Company[]>([])
-  const [selectedCompany, setSelectedCompany] = useState<string>(localStorage.getItem('confido_companyFilter') || '')
+  const [selectedCompany, setSelectedCompany] = useState<string>(localStorage.getItem('clawback_companyFilter') || '')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const user = getStoredUser()
 
@@ -32,7 +32,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   // Persist company filter
   useEffect(() => {
-    localStorage.setItem('confido_companyFilter', selectedCompany);
+    localStorage.setItem('clawback_companyFilter', selectedCompany);
     (window as any).__companyId = selectedCompany ? parseInt(selectedCompany) : undefined
   }, [selectedCompany])
 
@@ -41,7 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="p-4 border-b border-edge">
         <div className="flex items-center justify-between">
           <Link to="/" className="hover:opacity-80 transition-opacity">
-            <h1 className="text-lg font-semibold text-heading">Confido</h1>
+            <h1 className="text-lg font-semibold text-heading">ClawBack</h1>
             <p className="text-xs text-subtle">Deduction Recovery</p>
           </Link>
           <div className="flex items-center gap-1">
@@ -145,7 +145,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-base font-semibold text-heading">Confido</h1>
+          <h1 className="text-base font-semibold text-heading">ClawBack</h1>
           <button
             onClick={toggle}
             className="ml-auto p-1.5 text-faint hover:text-heading hover:bg-panel-hover rounded transition-colors"

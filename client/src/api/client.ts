@@ -1,33 +1,33 @@
 export function getToken(): string | null {
-  return localStorage.getItem('confido_token');
+  return localStorage.getItem('clawback_token');
 }
 
 export function setToken(token: string | null) {
   if (token) {
-    localStorage.setItem('confido_token', token);
+    localStorage.setItem('clawback_token', token);
   } else {
-    localStorage.removeItem('confido_token');
+    localStorage.removeItem('clawback_token');
   }
 }
 
 export function getStoredUser(): { id: number; email: string; name: string; role: string } | null {
-  const raw = localStorage.getItem('confido_user');
+  const raw = localStorage.getItem('clawback_user');
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
 }
 
 export function setStoredUser(user: { id: number; email: string; name: string; role: string } | null) {
   if (user) {
-    localStorage.setItem('confido_user', JSON.stringify(user));
+    localStorage.setItem('clawback_user', JSON.stringify(user));
   } else {
-    localStorage.removeItem('confido_user');
+    localStorage.removeItem('clawback_user');
   }
 }
 
 export function logout() {
   setToken(null);
   setStoredUser(null);
-  localStorage.removeItem('confido_companyFilter');
+  localStorage.removeItem('clawback_companyFilter');
   window.location.href = '/login';
 }
 

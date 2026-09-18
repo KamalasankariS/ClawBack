@@ -172,7 +172,7 @@ export function DeductionsPage() {
 
   const handleExport = async () => {
     const params = buildFilterParams()
-    const token = localStorage.getItem('confido_token')
+    const token = localStorage.getItem('clawback_token')
     const res = await fetch(`/api/deductions/export?${params}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })

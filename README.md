@@ -1,10 +1,8 @@
-# Confido — Deduction Recovery Tool
+# ClawBack — Track, dispute, and recover retailer deductions.
 
-![CI](https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/KamalasankariS/ClawBack/actions/workflows/ci.yml/badge.svg)
 
 A tool that helps analysts track, dispute, and recover retailer deductions — replacing messy spreadsheets with a clean workflow and real-time recovery metrics.
-
-[Watch the demo video (Loom)](https://www.loom.com/share/e508d4145b9542bc910b91e78f959956)
 
 ---
 
@@ -27,8 +25,8 @@ A tool that helps analysts track, dispute, and recover retailer deductions — r
 **Step 3.** Clone the repo and run the start script.
 
 ```bash
-git clone https://github.com/KamalasankariS/Confido-Deduction-Recovery-Project.git
-cd Confido-Deduction-Recovery-Project
+git clone https://github.com/KamalasankariS/ClawBack.git
+cd ClawBack
 ./start.sh
 ```
 
@@ -58,10 +56,10 @@ Press `Ctrl+C` to stop the app.
 Add this alias to your `~/.zshrc` (or `~/.bash_profile`):
 
 ```bash
-alias confido='cd "/path/to/confido" && ./start.sh'
+alias clawback='cd "/path/to/ClawBack" && ./start.sh'
 ```
 
-Then just type `confido` to launch.
+Then just type `clawback` to launch.
 </details>
 
 <details>
@@ -117,8 +115,8 @@ cd client && npm install && npm run dev
 | **PostgreSQL over SQLite** | Proper types, concurrent access, scales with team | SQLite is simpler but limits concurrent writes |
 | **JWT over SSO** | Sufficient for internal use, no external dependencies | SSO is better for enterprise but needs infrastructure |
 | **Server-side pagination** | Handles dataset growth correctly | Client-side filtering works for 1K but breaks at 10K+ |
-| **Hardcoded retailer alias map** | Reliable for 54 known variants, zero false positives | Fuzzy matching risks false matches |
-| **Controlled dropdowns** | Prevents the data mess that created 54 retailer variants | Free text is flexible but caused the original problem |
+| **Hardcoded retailer alias map** | Reliable for known variants, zero false positives | Fuzzy matching risks false matches |
+| **Controlled dropdowns** | Prevents data quality issues from free-text entry | Free text is flexible but causes inconsistencies |
 | **CSV preview before import** | Analyst catches errors before they enter the system | Auto-import is faster but risks bad data |
 | **Duplicate warning (not blocking)** | Sometimes legitimate duplicates exist | Hard-blocking is safer but creates false positives |
 

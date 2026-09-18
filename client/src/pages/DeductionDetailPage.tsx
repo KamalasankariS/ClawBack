@@ -86,7 +86,7 @@ function ActionModal({
       Array.from(files).forEach(f => formData.append('files', f))
       const res = await fetch('/api/uploads', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('confido_token') || ''}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('clawback_token') || ''}` },
         body: formData,
       })
       if (!res.ok) throw new Error('Upload failed')

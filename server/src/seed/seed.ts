@@ -71,7 +71,7 @@ async function main() {
   const bcrypt = await import('bcryptjs');
   const systemHash = await bcrypt.hash('system-internal', 10);
   await prisma.user.create({
-    data: { email: 'system@confido.internal', employeeId: 'SYS-000', name: 'System', passwordHash: systemHash, role: 'system' },
+    data: { email: 'system@clawback.internal', employeeId: 'SYS-000', name: 'System', passwordHash: systemHash, role: 'system' },
   });
   console.log('  Seeded system user');
 
@@ -81,7 +81,7 @@ async function main() {
   const allReasons = await prisma.disputeReason.findMany();
   for (const r of allReasons) reasonLookup.set(r.code, r.id);
   const validCompanyIds = new Set(companies.map(c => c.id));
-  const systemUser = await prisma.user.findFirst({ where: { email: 'system@confido.internal' } });
+  const systemUser = await prisma.user.findFirst({ where: { email: 'system@clawback.internal' } });
   const systemUserId = systemUser!.id;
 
   // 6. Process deductions

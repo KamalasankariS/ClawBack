@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'confido-dev-secret-change-in-prod';
+const JWT_SECRET = process.env.JWT_SECRET || 'clawback-dev-secret-change-in-prod';
 
 export interface AuthPayload {
   userId: number;
