@@ -4,71 +4,80 @@ interface RetailerRef {
 }
 
 const RETAILER_ALIASES: Record<string, string> = {
-  // KeHE
-  'kehe': 'KeHE',
-  'kehe distributors': 'KeHE',
-  'kehe distributors llc': 'KeHE',
-  'kehe food distributors': 'KeHE',
-  'k e h e': 'KeHE',
-  // UNFI
-  'unfi': 'UNFI',
-  'united natural foods': 'UNFI',
-  'united natural foods inc': 'UNFI',
-  'u.n.f.i.': 'UNFI',
-  'un fi': 'UNFI',
-  // Gordon Food Service
-  'gordon food service': 'Gordon Food Service',
-  'gordon food svc': 'Gordon Food Service',
-  'gordon food service (gfc)': 'Gordon Food Service',
-  'gfc': 'Gordon Food Service',
-  'gfs': 'Gordon Food Service',
-  // Dot Foods
-  'dot foods': 'Dot Foods',
-  'dot foods inc': 'Dot Foods',
-  'dotfoods': 'Dot Foods',
-  // Kroger
-  'kroger': 'Kroger',
-  'kroger co': 'Kroger',
-  'kroger co.': 'Kroger',
-  'the kroger co.': 'Kroger',
-  // Target
-  'target': 'Target',
-  'target corp': 'Target',
-  'target corporation': 'Target',
-  'tgt': 'Target',
-  // Walmart
-  'walmart': 'Walmart',
-  'walmart inc.': 'Walmart',
-  'wal-mart': 'Walmart',
-  'wal mart': 'Walmart',
-  // Amazon
-  'amazon': 'Amazon',
-  'amazon.com': 'Amazon',
-  'amazon vendor': 'Amazon',
-  'amazon vendor central': 'Amazon',
-  'amzn': 'Amazon',
-  // WinCo
-  'winco': 'WinCo Foods',
-  'winco foods': 'WinCo Foods',
-  // Loblaw
-  'loblaw': 'Loblaw',
-  'loblaw companies': 'Loblaw',
-  'loblaws': 'Loblaw',
-  // Ahold Delhaize
-  'ahold': 'Ahold Delhaize',
-  'ahold delhaize': 'Ahold Delhaize',
-  // BJ's
-  'bjs': "BJ's Wholesale Club",
-  'bjs wholesale': "BJ's Wholesale Club",
-  "bj's wholesale club": "BJ's Wholesale Club",
-  // H-E-B
-  'h-e-b': 'H-E-B',
-  'heb': 'H-E-B',
-  'h e b': 'H-E-B',
-  // CVS
-  'cvs': 'CVS',
-  'cvs health': 'CVS',
-  'cvs pharmacy': 'CVS',
+  // FreshRoute Supply
+  'freshroute': 'FreshRoute Supply',
+  'freshroute supply': 'FreshRoute Supply',
+  'freshroute supply llc': 'FreshRoute Supply',
+  'fresh route supply': 'FreshRoute Supply',
+  'f r s': 'FreshRoute Supply',
+  // NorthStar Distribution
+  'northstar': 'NorthStar Distribution',
+  'northstar distribution': 'NorthStar Distribution',
+  'northstar dist': 'NorthStar Distribution',
+  'north star distribution': 'NorthStar Distribution',
+  'n.s.d.': 'NorthStar Distribution',
+  'ns dist': 'NorthStar Distribution',
+  // Meridian Food Service
+  'meridian food service': 'Meridian Food Service',
+  'meridian food svc': 'Meridian Food Service',
+  'meridian food service (mfs)': 'Meridian Food Service',
+  'mfs': 'Meridian Food Service',
+  'meridian fs': 'Meridian Food Service',
+  // PrimeLine Foods
+  'primeline foods': 'PrimeLine Foods',
+  'primeline foods inc': 'PrimeLine Foods',
+  'primelinefoods': 'PrimeLine Foods',
+  'prime line foods': 'PrimeLine Foods',
+  // Greenfield Markets
+  'greenfield': 'Greenfield Markets',
+  'greenfield markets': 'Greenfield Markets',
+  'greenfield mkts': 'Greenfield Markets',
+  'greenfield markets co.': 'Greenfield Markets',
+  // Summit Stores
+  'summit': 'Summit Stores',
+  'summit stores': 'Summit Stores',
+  'summit stores corp': 'Summit Stores',
+  'summit corporation': 'Summit Stores',
+  // ValueMart
+  'valuemart': 'ValueMart',
+  'valuemart inc.': 'ValueMart',
+  'value-mart': 'ValueMart',
+  'value mart': 'ValueMart',
+  // ShopStream
+  'shopstream': 'ShopStream',
+  'shopstream.com': 'ShopStream',
+  'shopstream vendor': 'ShopStream',
+  'shopstream vendor central': 'ShopStream',
+  'shpstrm': 'ShopStream',
+  // Prairie Grocers
+  'prairie': 'Prairie Grocers',
+  'prairie grocers': 'Prairie Grocers',
+  'prairie grocers inc': 'Prairie Grocers',
+  // Maple Leaf Market
+  'maple leaf': 'Maple Leaf Market',
+  'maple leaf market': 'Maple Leaf Market',
+  'mapleleaf': 'Maple Leaf Market',
+  'maple leaf markets': 'Maple Leaf Market',
+  // Atlas Retail Group
+  'atlas': 'Atlas Retail Group',
+  'atlas retail': 'Atlas Retail Group',
+  'atlas retail group': 'Atlas Retail Group',
+  'atlas retail grp': 'Atlas Retail Group',
+  // BulkBarn Club
+  'bulkbarn': 'BulkBarn Club',
+  'bulkbarn club': 'BulkBarn Club',
+  'bulk barn club': 'BulkBarn Club',
+  'bulk barn': 'BulkBarn Club',
+  // Lone Star Grocery
+  'lone star': 'Lone Star Grocery',
+  'lone star grocery': 'Lone Star Grocery',
+  'lonestar': 'Lone Star Grocery',
+  'lone star grocery co.': 'Lone Star Grocery',
+  // MediMart Pharmacy
+  'medimart': 'MediMart Pharmacy',
+  'medimart pharmacy': 'MediMart Pharmacy',
+  'medi mart': 'MediMart Pharmacy',
+  'medimart health': 'MediMart Pharmacy',
 };
 
 export function buildRetailerLookup(retailers: RetailerRef[]): Map<string, number> {
