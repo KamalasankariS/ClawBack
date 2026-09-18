@@ -1,5 +1,5 @@
 {
-  "name": "confido-server",
+  "name": "clawback-server",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed": "tsx ../seed/seed.ts",
+    "seed": "tsx src/seed/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
