@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRouter from './routes/auth.js';
 import companiesRouter from './routes/companies.js';
 import retailersRouter from './routes/retailers.js';
@@ -56,5 +58,13 @@ app.use('/api/import-audit', authMiddleware, importAuditRouter);
 app.use('/api/uploads', authMiddleware, uploadsRouter);
 
 app.use(errorHandler);
+
+// Serve frontend in production
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
+app.use(express.static(clientDist));
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 export default app;

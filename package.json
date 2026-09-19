@@ -1,0 +1,11 @@
+{
+  "name": "clawback",
+  "private": true,
+  "scripts": {
+    "build": "cd client && npm install && npm run build && cd ../server && npm install --include=dev && npx prisma generate && npx tsc",
+    "start": "cd server && npx prisma migrate deploy && npx tsx src/seed/seed.ts && node dist/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

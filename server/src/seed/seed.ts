@@ -38,6 +38,13 @@ function loadJson<T>(filename: string): T {
 }
 
 async function main() {
+  // Skip seeding if data already exists (safe for production re-deploys)
+  const existing = await prisma.deduction.count();
+  if (existing > 0) {
+    console.log(`Database already has ${existing} deductions — skipping seed.`);
+    return;
+  }
+
   console.log('Seeding database...');
 
   await prisma.$executeRawUnsafe('TRUNCATE TABLE import_audit, activity_log, deductions, users, dispute_reasons, retailers, companies RESTART IDENTITY CASCADE');
