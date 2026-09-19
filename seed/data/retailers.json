@@ -1,0 +1,16 @@
+[
+  { "id": 10, "name": "FreshRoute Supply", "type": "Distributor", "region": "US" },
+  { "id": 11, "name": "NorthStar Distribution", "type": "Distributor", "region": "US" },
+  { "id": 12, "name": "Meridian Food Service", "type": "Distributor", "region": "US" },
+  { "id": 13, "name": "PrimeLine Foods", "type": "Distributor", "region": "US" },
+  { "id": 14, "name": "Greenfield Markets", "type": "Retailer", "region": "US" },
+  { "id": 15, "name": "Summit Stores", "type": "Retailer", "region": "US" },
+  { "id": 16, "name": "ValueMart", "type": "Retailer", "region": "US" },
+  { "id": 17, "name": "ShopStream", "type": "Retailer", "region": "US" },
+  { "id": 18, "name": "Prairie Grocers", "type": "Retailer", "region": "US" },
+  { "id": 19, "name": "Maple Leaf Market", "type": "Retailer", "region": "CA" },
+  { "id": 20, "name": "Atlas Retail Group", "type": "Retailer", "region": "US" },
+  { "id": 21, "name": "BulkBarn Club", "type": "Retailer", "region": "US" },
+  { "id": 22, "name": "Lone Star Grocery", "type": "Retailer", "region": "US" },
+  { "id": 23, "name": "MediMart Pharmacy", "type": "Retailer", "region": "US" }
+]

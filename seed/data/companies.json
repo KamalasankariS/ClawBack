@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Pinnacle Provisions Inc.",
+    "slug": "pinnacle-provisions",
+    "erp_system": "NetSuite",
+    "default_currency": "USD",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "name": "Ridgeline Beverages",
+    "slug": "ridgeline-bev",
+    "erp_system": "QuickBooks Online",
+    "default_currency": "USD",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "name": "Ember & Oak Foods",
+    "slug": "ember-oak",
+    "erp_system": "Xero",
+    "default_currency": "CAD",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "name": "Coastal Naturals",
+    "slug": "coastal-naturals",
+    "erp_system": null,
+    "default_currency": "USD",
+    "is_active": false
+  }
+]
