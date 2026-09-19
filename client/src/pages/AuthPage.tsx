@@ -21,11 +21,14 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
   const [employeeId, setEmployeeId] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [demoLoading, setDemoLoading] = useState(false)
 
   const allRulesPass = PASSWORD_RULES.every(r => r.test(password))
+  const passwordsMatch = password === confirmPassword
+  const registerReady = allRulesPass && passwordsMatch && confirmPassword.length > 0
 
   const handleDemo = async () => {
     setDemoLoading(true)
@@ -44,9 +47,15 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (mode === 'register' && !allRulesPass) {
-      setError('Password does not meet all requirements')
-      return
+    if (mode === 'register') {
+      if (!allRulesPass) {
+        setError('Password does not meet all requirements')
+        return
+      }
+      if (!passwordsMatch) {
+        setError('Passwords do not match')
+        return
+      }
     }
     setLoading(true)
     setError('')
@@ -177,13 +186,24 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {mode === 'register' && password.length > 0 && (
+              {mode === 'register' && (
                 <div className="mt-2 space-y-1">
                   {PASSWORD_RULES.map((rule) => {
                     const passes = rule.test(password)
                     return (
-                      <div key={rule.label} className={`flex items-center gap-1.5 text-xs ${passes ? 'text-green-600 dark:text-green-400' : 'text-faint'}`}>
-                        {passes ? <Check size={10} /> : <X size={10} />}
+                      <div key={rule.label} className={`flex items-center gap-1.5 text-xs ${
+                        password.length === 0
+                          ? 'text-faint'
+                          : passes
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-500 dark:text-red-400'
+                      }`}>
+                        {password.length === 0
+                          ? <X size={10} className="opacity-40" />
+                          : passes
+                            ? <Check size={10} />
+                            : <X size={10} />
+                        }
                         {rule.label}
                       </div>
                     )
@@ -192,9 +212,39 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
               )}
             </div>
 
+            {mode === 'register' && (
+              <div>
+                <label className="text-xs font-medium text-subtle mb-1 block">Confirm Password</label>
+                <input
+                  type="password"
+                  required
+                  className={`w-full text-sm border rounded-md px-3 py-2.5 bg-input-bg text-heading ${
+                    confirmPassword.length === 0
+                      ? 'border-edge'
+                      : passwordsMatch
+                        ? 'border-green-400 dark:border-green-500'
+                        : 'border-red-400 dark:border-red-500'
+                  }`}
+                  placeholder="Re-enter your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {confirmPassword.length > 0 && !passwordsMatch && (
+                  <p className="mt-1 text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+                    <X size={10} /> Passwords do not match
+                  </p>
+                )}
+                {confirmPassword.length > 0 && passwordsMatch && (
+                  <p className="mt-1 text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                    <Check size={10} /> Passwords match
+                  </p>
+                )}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading || (mode === 'register' && !allRulesPass)}
+              disabled={loading || (mode === 'register' && !registerReady)}
               className="w-full py-2.5 text-sm font-medium bg-accent text-white rounded-md hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
               {loading
