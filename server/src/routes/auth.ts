@@ -92,6 +92,31 @@ router.post('/login', async (req, res) => {
   });
 });
 
+// POST /api/auth/demo — instant demo access
+router.post('/demo', async (req, res) => {
+  const demoEmail = 'demo@clawback.app';
+  let user = await prisma.user.findUnique({ where: { email: demoEmail } });
+
+  if (!user) {
+    const hash = await bcrypt.hash('Demo1234!', 12);
+    user = await prisma.user.create({
+      data: {
+        email: demoEmail,
+        employeeId: 'DEMO-001',
+        name: 'Demo Analyst',
+        passwordHash: hash,
+        role: 'analyst',
+      },
+    });
+  }
+
+  const token = signToken({ userId: user.id, email: user.email, name: user.name });
+  res.json({
+    token,
+    user: { id: user.id, email: user.email, employeeId: user.employeeId, name: user.name, role: user.role },
+  });
+});
+
 // GET /api/auth/me — get current user from token
 router.get('/me', authMiddleware, async (req, res) => {
   const user = await prisma.user.findUnique({
