@@ -189,17 +189,36 @@ export function DashboardPage() {
             </div>
           </div>
         ))}
-        {/* Recovery Rate — navigates to /recovery */}
+        {/* Recovery Rate — circular gauge */}
         <div
           onClick={() => navigate('/recovery')}
           className="bg-panel rounded-lg border border-edge p-3 sm:p-4 cursor-pointer hover:border-accent/40 hover:shadow-sm transition-all"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] sm:text-xs font-medium text-subtle uppercase">Recovery Rate</span>
-            <TrendingUp size={16} className="text-accent-text" />
           </div>
-          <div className="text-lg sm:text-2xl font-bold text-heading">{summary.recoveryRate}%</div>
-          <div className="text-[10px] sm:text-xs text-subtle mt-1">{summary.resolvedCount} resolved cases</div>
+          <div className="flex items-center gap-3">
+            <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0">
+              <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--c-edge)" strokeWidth="3" />
+                <circle
+                  cx="18" cy="18" r="15.5" fill="none"
+                  stroke="var(--c-accent)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray={`${summary.recoveryRate * 0.974} 97.4`}
+                  className="transition-all duration-700 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs sm:text-sm font-bold text-heading">{summary.recoveryRate}%</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] sm:text-xs text-subtle">{summary.resolvedCount} resolved</div>
+              <div className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-medium">{formatCurrency(summary.totalRecovered)}</div>
+            </div>
+          </div>
         </div>
       </div>
 

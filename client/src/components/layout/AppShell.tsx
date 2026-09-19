@@ -40,9 +40,19 @@ export function AppShell({ children }: { children: ReactNode }) {
     <>
       <div className="p-4 border-b border-edge">
         <div className="flex items-center justify-between">
-          <Link to="/" className="hover:opacity-80 transition-opacity">
-            <h1 className="text-lg font-semibold text-heading">ClawBack</h1>
-            <p className="text-xs text-subtle">Deduction Recovery</p>
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
+                <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
+                <path d="M12 6v2" />
+                <path d="M12 16v2" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-heading leading-tight">ClawBack</h1>
+              <p className="text-[10px] text-subtle leading-tight">Deduction Recovery</p>
+            </div>
           </Link>
           <div className="flex items-center gap-1">
             <button
@@ -145,7 +155,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-base font-semibold text-heading">ClawBack</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-accent/10 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
+                <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
+                <path d="M12 6v2" />
+                <path d="M12 16v2" />
+              </svg>
+            </div>
+            <h1 className="text-base font-bold text-heading">ClawBack</h1>
+          </div>
           <button
             onClick={toggle}
             className="ml-auto p-1.5 text-faint hover:text-heading hover:bg-panel-hover rounded transition-colors"
