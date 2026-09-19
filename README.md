@@ -2,6 +2,8 @@
 
 ![CI](https://github.com/KamalasankariS/ClawBack/actions/workflows/ci.yml/badge.svg)
 
+**[Live Demo](https://clawback-production-4302.up.railway.app)** | Built with TypeScript, React, Express, PostgreSQL
+
 A tool that helps analysts track, dispute, and recover retailer deductions — replacing messy spreadsheets with a clean workflow and real-time recovery metrics.
 
 ---
