@@ -8,7 +8,7 @@ A tool that helps analysts track, dispute, and recover retailer deductions — r
 
 ## How to Run
 
-**Step 1.** Install [Node.js 18+](https://nodejs.org/) — pick your OS and download the installer.
+**Step 1.** Install [Node.js 20+](https://nodejs.org/) — pick your OS and download the installer.
 
 ![Install Node.js](docs/images/03-install-nodejs.jpeg)
 ![Select your OS](docs/images/04-nodejs-select-os.jpeg)

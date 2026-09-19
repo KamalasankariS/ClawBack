@@ -6,6 +6,6 @@
     "start": "cd server && npx prisma migrate deploy && npx tsx src/seed/seed.ts && node dist/index.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }
