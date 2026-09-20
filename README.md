@@ -116,4 +116,4 @@ Y2K chalkboard aesthetic — dark surfaces, cream panels, window-chrome cards, a
 
 ## License
 
-MIT
+[MIT](LICENSE)
