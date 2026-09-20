@@ -173,7 +173,7 @@ export function ImportAuditPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-panel rounded-lg border border-edge overflow-hidden">
+      <div className="window-card">
         <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="bg-panel-hover border-b border-edge">

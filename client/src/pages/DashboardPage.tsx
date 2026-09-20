@@ -48,10 +48,10 @@ interface TrendPoint {
 
 // Fixed colors for the original 4 companies, then generated distinct colors for new ones
 const BASE_COMPANY_COLORS: Record<string, string> = {
-  'Pinnacle Provisions Inc.': '#e8913a',   // orange
-  'Ridgeline Beverages': '#4a7c59',       // green
+  'Pinnacle Provisions Inc.': '#c964cf',   // purple-pink
+  'Ridgeline Beverages': '#e8913a',       // warm orange
   'Ember & Oak Foods': '#d94545',         // red
-  'Coastal Naturals': '#5b8abf',          // blue
+  'Coastal Naturals': '#5ba88a',          // teal
 }
 
 // Generate a distinct hue-spaced color that avoids the 4 base hues (orange~30, green~140, red~0, blue~215)
@@ -164,59 +164,65 @@ export function DashboardPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-heading mb-4">Recovery Dashboard</h2>
-
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            onClick={() => navigate(m.link)}
-            className="bg-panel rounded-lg border border-edge p-3 sm:p-4 cursor-pointer hover:border-accent/40 hover:shadow-sm transition-all"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] sm:text-xs font-medium text-subtle uppercase">{m.label}</span>
-              <m.icon size={16} className={m.color} />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-heading">{m.value}</div>
-            <div className="flex items-center gap-1 mt-1">
-              <span className="text-[10px] sm:text-xs text-subtle">{m.sub}</span>
-              {m.trend && (
-                <span className="flex items-center gap-0.5" title={trendLabel(m.trend)}>
-                  <TrendIcon dir={m.trend} />
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-        {/* Recovery Rate — circular gauge */}
-        <div
-          onClick={() => navigate('/recovery')}
-          className="bg-panel rounded-lg border border-edge p-3 sm:p-4 cursor-pointer hover:border-accent/40 hover:shadow-sm transition-all"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] sm:text-xs font-medium text-subtle uppercase">Recovery Rate</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0">
-              <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--c-edge)" strokeWidth="3" />
-                <circle
-                  cx="18" cy="18" r="15.5" fill="none"
-                  stroke="var(--c-accent)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeDasharray={`${summary.recoveryRate * 0.974} 97.4`}
-                  className="transition-all duration-700 ease-out"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs sm:text-sm font-bold text-heading">{summary.recoveryRate}%</span>
+      <div className="window-card mb-6">
+        <div className="window-titlebar">
+          <span>recovery dashboard</span>
+          <div className="window-titlebar-dots"><span /><span /><span /></div>
+        </div>
+        <div className="window-body">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {metrics.map((m, i) => (
+              <div
+                key={m.label}
+                onClick={() => navigate(m.link)}
+                className={`cursor-pointer hover:bg-panel-hover transition-colors p-3 ${i < metrics.length - 1 ? 'dotted-sep lg:border-b-0 lg:border-r lg:border-dotted lg:border-edge' : ''}`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="label-mono">{m.label}</span>
+                  <m.icon size={16} className={m.color} />
+                </div>
+                <div className="text-lg sm:text-2xl font-bold text-heading">{m.value}</div>
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="text-[10px] sm:text-xs text-subtle">{m.sub}</span>
+                  {m.trend && (
+                    <span className="flex items-center gap-0.5" title={trendLabel(m.trend)}>
+                      <TrendIcon dir={m.trend} />
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-            <div>
-              <div className="text-[10px] sm:text-xs text-subtle">{summary.resolvedCount} resolved</div>
-              <div className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-medium">{formatCurrency(summary.totalRecovered)}</div>
+            ))}
+            {/* Recovery Rate — circular gauge */}
+            <div
+              onClick={() => navigate('/recovery')}
+              className="cursor-pointer hover:bg-panel-hover transition-colors p-3"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="label-mono">recovery rate</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0">
+                  <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--c-edge)" strokeWidth="3" />
+                    <circle
+                      cx="18" cy="18" r="15.5" fill="none"
+                      stroke="var(--c-accent)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeDasharray={`${summary.recoveryRate * 0.974} 97.4`}
+                      className="transition-all duration-700 ease-out"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xs sm:text-sm font-bold text-heading">{summary.recoveryRate}%</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] sm:text-xs text-subtle">{summary.resolvedCount} resolved</div>
+                  <div className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-medium">{formatCurrency(summary.totalRecovered)}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -224,8 +230,12 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recovery by Retailer */}
-        <div className="bg-panel rounded-lg border border-edge p-4">
-          <h3 className="text-sm font-medium text-prose mb-3">Deductions by Retailer</h3>
+        <div className="window-card">
+          <div className="window-titlebar">
+            <span>deductions by retailer</span>
+            <div className="window-titlebar-dots"><span /><span /><span /></div>
+          </div>
+          <div className="window-body">
           {(() => {
             const sliced = retailerData.slice(0, 14)
             // Build color map once
@@ -286,13 +296,18 @@ export function DashboardPage() {
               </ResponsiveContainer>
             )
           })()}
+          </div>
         </div>
 
         {/* Aging */}
-        <div className="bg-panel rounded-lg border border-edge p-4">
-          <h3 className="text-sm font-medium text-prose mb-3">Aging of Active Disputes</h3>
+        <div className="window-card">
+          <div className="window-titlebar">
+            <span>aging of active disputes</span>
+            <div className="window-titlebar-dots"><span /><span /><span /></div>
+          </div>
+          <div className="window-body">
           {(() => {
-            const agingColors = ['#4a7c59', '#e8b630', '#e8913a', '#d94545']
+            const agingColors = ['#5ba88a', '#e8b630', '#e8913a', '#d94545']
             return (
               <>
                 <ResponsiveContainer width="100%" height={300}>
@@ -359,6 +374,7 @@ export function DashboardPage() {
               </>
             )
           })()}
+          </div>
         </div>
       </div>
 
@@ -366,8 +382,12 @@ export function DashboardPage() {
       {trends.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Graph 3: Monthly Dispute Volume */}
-          <div className="bg-panel rounded-lg border border-edge p-4">
-            <h3 className="text-sm font-medium text-prose mb-3">Monthly Dispute Volume</h3>
+          <div className="window-card">
+            <div className="window-titlebar">
+              <span>monthly dispute volume</span>
+              <div className="window-titlebar-dots"><span /><span /><span /></div>
+            </div>
+            <div className="window-body">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={trends}
@@ -402,19 +422,24 @@ export function DashboardPage() {
                     <Cell key={idx} fill="#e8913a" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
                   ))}
                 </Bar>
-                <Bar dataKey="recoveredAmount" name="recoveredAmount" fill="#4a7c59" radius={[3, 3, 0, 0]}>
+                <Bar dataKey="recoveredAmount" name="recoveredAmount" fill="#c964cf" radius={[3, 3, 0, 0]}>
                   {trends.map((_, idx) => (
-                    <Cell key={idx} fill="#4a7c59" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
+                    <Cell key={idx} fill="#c964cf" opacity={activeDisputeIdx === null || activeDisputeIdx === idx ? 1 : 0.2} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
             <p className="text-[10px] text-faint text-center -mt-1">Month (when deduction was created)</p>
+            </div>
           </div>
 
-          {/* Graph 4: Recovery Rate Over Time — area chart with crosshair tooltip */}
-          <div className="bg-panel rounded-lg border border-edge p-4">
-            <h3 className="text-sm font-medium text-prose mb-3">Recovery Rate Over Time</h3>
+          {/* Graph 4: Recovery Rate Over Time */}
+          <div className="window-card">
+            <div className="window-titlebar">
+              <span>recovery rate over time</span>
+              <div className="window-titlebar-dots"><span /><span /><span /></div>
+            </div>
+            <div className="window-body">
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={trends}>
                 <defs>
@@ -447,13 +472,18 @@ export function DashboardPage() {
               </AreaChart>
             </ResponsiveContainer>
             <p className="text-[10px] text-faint text-center -mt-1">Month (when deduction was created)</p>
+            </div>
           </div>
         </div>
       )}
 
       {/* Pipeline Overview */}
-      <div className="mt-4 bg-panel rounded-lg border border-edge p-4">
-        <h3 className="text-sm font-medium text-prose mb-3">Pipeline Overview</h3>
+      <div className="mt-4 window-card">
+        <div className="window-titlebar">
+          <span>pipeline overview</span>
+          <div className="window-titlebar-dots"><span /><span /><span /></div>
+        </div>
+        <div className="window-body">
         <div className="flex flex-wrap gap-2">
           {pipeline.map((s, i) => (
             <div key={s.label} className="flex items-center gap-2 flex-1 min-w-[100px]">
@@ -469,6 +499,7 @@ export function DashboardPage() {
               )}
             </div>
           ))}
+        </div>
         </div>
       </div>
     </div>

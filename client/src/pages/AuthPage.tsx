@@ -16,10 +16,10 @@ const PASSWORD_RULES = [
 ]
 
 const FEATURES = [
-  { icon: BarChart3, title: 'Recovery Dashboard', desc: 'Real-time metrics on disputed amounts, recovery rates, and aging trends' },
-  { icon: FileSearch, title: 'Smart Data Pipeline', desc: '1,007 records cleaned automatically — 57 name variants mapped to 14 canonical retailers' },
-  { icon: Shield, title: 'Full Audit Trail', desc: 'Every triage, dispute, and resolution decision is logged with mandatory notes' },
-  { icon: TrendingUp, title: 'Dispute Workflow', desc: 'Open → Triage → Dispute → Resolve → Close, with file attachments at every step' },
+  { icon: BarChart3, title: 'See where the money goes', desc: 'Recovery rates, dispute aging, and which retailers cost you the most. All in one dashboard.' },
+  { icon: FileSearch, title: 'Clean messy data automatically', desc: 'Import spreadsheet exports and the system normalizes names, dates, and amounts for you.' },
+  { icon: Shield, title: 'Every action is on the record', desc: 'Triage, dispute, and resolve with mandatory notes. Nothing happens without a paper trail.' },
+  { icon: TrendingUp, title: 'Dispute to resolution in one place', desc: 'Accept it, dispute it, or hold it. Then track it all the way to recovery.' },
 ]
 
 export function AuthPage({ onAuth }: { onAuth: () => void }) {
@@ -91,18 +91,12 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
   return (
     <div className="flex min-h-screen bg-surface">
       {/* Left panel — product story */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-[#1a2e22] dark:bg-[#0d1a13] text-white flex-col justify-between p-10 xl:p-14 relative overflow-hidden">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-
-        <div className="relative z-10">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] items-center justify-center p-6">
+        <div className="w-full max-w-2xl p-10 xl:p-14 flex flex-col min-h-[90vh]">
           {/* Brand */}
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" opacity="0.3" />
+          <div className="flex items-center gap-3 mb-14">
+            <div className="w-12 h-12 rounded-md bg-[#c964cf]/20 flex items-center justify-center border border-[#c964cf]/30">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c964cf" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
                 <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
                 <path d="M12 6v2" />
@@ -110,61 +104,55 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
               </svg>
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">ClawBack</h1>
-              <p className="text-sm text-white/50">Deduction Recovery Tool</p>
+              <h1 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "'Bungee', cursive" }}><span className="text-[#fff44f]">C</span>law<span className="text-[#b868d8]">B</span>ack</h1>
+              <p className="text-lg font-black text-[#fff44f]" style={{ fontFamily: "'Annie Use Your Telescope', cursive", letterSpacing: '0.04em' }}>Track, dispute, and recover retailer deductions</p>
             </div>
           </div>
-        </div>
 
-        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-lg">
-          <h2 className="text-3xl xl:text-4xl font-bold leading-tight mb-3">
-            Stop losing money to
-            <span className="text-emerald-400"> invalid deductions</span>
-          </h2>
-          <p className="text-white/60 text-base mb-10 leading-relaxed">
-            Retailers deduct millions from CPG payments every year. Many are wrong.
-            ClawBack gives your team the workflow to find them, dispute them, and get the money back.
-          </p>
+          {/* Headline */}
+          <div className="flex-1 flex flex-col justify-center max-w-lg">
+            <h2 className="text-4xl xl:text-[2.75rem] font-bold text-white leading-[1.15] mb-5" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Stop losing money to{' '}
+              <span className="text-[#c964cf]">invalid deductions</span>
+            </h2>
+            <p className="text-[15px] text-[#f5efe6] leading-relaxed mb-12" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Retailers deduct millions from CPG payments every year. Many are wrong.
+              ClawBack gives your team the workflow to find them, dispute them, and get the money back.
+            </p>
 
-          <div className="space-y-5">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4">
-                <div className="w-9 h-9 rounded-lg bg-white/8 flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon size={18} className="text-emerald-400" />
+            {/* Features */}
+            <div className="space-y-0">
+              {FEATURES.map(({ icon: Icon, title, desc }, i) => (
+                <div key={title} className={`flex gap-3 items-start py-4 ${i < FEATURES.length - 1 ? 'border-b border-dotted border-white/8' : ''}`}>
+                  <Icon size={15} className="text-[#fff44f] shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xl font-medium text-[#fff44f] mb-0.5" style={{ fontFamily: "'Fredericka the Great', serif" }}>{title}</h3>
+                    <p className="text-[13px] text-[#f5efe6] leading-relaxed" style={{ fontFamily: "'Playfair Display', serif" }}>{desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold mb-0.5">{title}</h3>
-                  <p className="text-sm text-white/45 leading-relaxed">{desc}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-xs text-white/30">
-            Built with TypeScript, React, Express, PostgreSQL, Prisma
-          </p>
         </div>
       </div>
 
       {/* Right panel — auth form */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-6" style={{ backgroundImage: "url('/chalkboard-grid.svg')", backgroundRepeat: 'repeat', backgroundSize: '30px 30px' }}>
         <div className="w-full max-w-sm space-y-5">
           {/* Mobile brand (hidden on desktop) */}
           <div className="lg:hidden text-center mb-2">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-8 h-8 rounded-md bg-label/15 border border-label/30 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c-label)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
                   <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
                   <path d="M12 6v2" />
                   <path d="M12 16v2" />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-heading">ClawBack</h1>
+              <h1 className="text-xl font-bold text-heading" style={{ fontFamily: "'Bungee', cursive" }}>ClawBack</h1>
             </div>
-            <p className="text-sm text-subtle">Track, dispute, and recover retailer deductions</p>
+            <p className="text-sm text-subtle" style={{ fontFamily: "'Annie Use Your Telescope', cursive", fontSize: '0.8rem' }}>Track, dispute, and recover retailer deductions</p>
           </div>
 
           {/* Demo CTA */}
@@ -176,16 +164,20 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
             <Play size={16} fill="currentColor" />
             {demoLoading ? 'Loading demo...' : 'Try the Live Demo'}
           </button>
-          <p className="text-center text-[11px] text-faint -mt-1">No account needed — explore everything instantly</p>
+          <p className="text-center text-lg font-bold text-white -mt-1" style={{ fontFamily: "'Annie Use Your Telescope', cursive" }}>No account needed — explore everything instantly</p>
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-edge" />
-            <span className="text-xs text-faint">or use your account</span>
+            <span className="text-lg font-bold text-white" style={{ fontFamily: "'Annie Use Your Telescope', cursive" }}>or use your account</span>
             <div className="flex-1 h-px bg-edge" />
           </div>
 
           {/* Auth form */}
-          <div className="bg-panel rounded-xl shadow-lg border border-edge overflow-hidden">
+          <div className="window-card shadow-lg">
+            <div className="window-titlebar">
+              <span>{mode === 'login' ? 'sign in' : 'create account'}</span>
+              <div className="window-titlebar-dots"><span /><span /><span /></div>
+            </div>
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               {/* Toggle */}
               <div className="flex rounded-lg border border-edge overflow-hidden">
@@ -223,7 +215,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
                       type="text"
                       required
                       className="w-full text-sm border border-edge rounded-md px-3 py-2.5 bg-input-bg text-heading"
-                      placeholder="Jane Smith"
+                      placeholder="Your full name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
@@ -234,7 +226,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
                       type="text"
                       required
                       className="w-full text-sm border border-edge rounded-md px-3 py-2.5 uppercase bg-input-bg text-heading"
-                      placeholder="EMP-001"
+                      placeholder="e.g. CB-1234"
                       value={employeeId}
                       onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
                     />
@@ -248,7 +240,7 @@ export function AuthPage({ onAuth }: { onAuth: () => void }) {
                   type="email"
                   required
                   className="w-full text-sm border border-edge rounded-md px-3 py-2.5 bg-input-bg text-heading"
-                  placeholder="you@company.com"
+                  placeholder="you@clawback.app"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

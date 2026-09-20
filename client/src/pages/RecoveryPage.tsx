@@ -142,7 +142,12 @@ export function RecoveryPage() {
     <div>
       {/* Hero Section */}
       {summary && (
-        <div className="bg-panel rounded-lg border border-edge p-5 sm:p-6 mb-6">
+        <div className="window-card mb-6">
+          <div className="window-titlebar">
+            <span>recovery summary</span>
+            <div className="window-titlebar-dots"><span /><span /><span /></div>
+          </div>
+          <div className="p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
@@ -156,24 +161,25 @@ export function RecoveryPage() {
             <div className="hidden sm:block w-px h-14 bg-edge" />
             <div className="grid grid-cols-3 gap-4 sm:gap-8 flex-1">
               <div>
-                <div className="text-xs text-subtle uppercase mb-1">Resolved Cases</div>
+                <div className="label-mono mb-1">resolved cases</div>
                 <div className="text-lg font-semibold text-heading">{summary.resolvedCount}</div>
               </div>
               <div>
-                <div className="text-xs text-subtle uppercase mb-1">Total Disputed</div>
+                <div className="label-mono mb-1">total disputed</div>
                 <div className="text-lg font-semibold text-heading">{formatCurrency(summary.resolvedPool)}</div>
                 <div className="text-[10px] text-faint mt-0.5">Only resolved cases, not all deductions</div>
               </div>
               <div>
-                <div className="text-xs text-subtle uppercase mb-1">Recovered</div>
+                <div className="label-mono mb-1">recovered</div>
                 <div className="text-lg font-semibold text-green-600 dark:text-green-400">{formatCurrency(summary.totalRecovered)}</div>
               </div>
             </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-edge">
+          <div className="mt-3 pt-3 dotted-sep">
             <span className="text-xs text-subtle font-mono">
               {formatCurrency(summary.totalRecovered)} / {formatCurrency(summary.resolvedPool)} × 100 = {summary.recoveryRate}%
             </span>
+          </div>
           </div>
         </div>
       )}
@@ -271,7 +277,7 @@ export function RecoveryPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-panel rounded-lg border border-edge overflow-hidden">
+      <div className="window-card">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

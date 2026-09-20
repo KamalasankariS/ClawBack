@@ -1,48 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&family=Bungee&family=Fredericka+the+Great&family=Playfair+Display:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --c-surface: #faf8f4;
-  --c-panel: #ffffff;
-  --c-panel-hover: #f5f2ec;
-  --c-sidebar: #ffffff;
-  --c-edge: #e8e2d9;
-  --c-edge-light: #f0ebe3;
-  --c-heading: #1c1917;
-  --c-prose: #44403c;
-  --c-subtle: #78716c;
-  --c-faint: #a8a29e;
-  --c-accent: #4a7c59;
-  --c-accent-hover: #3d6649;
-  --c-accent-soft: #eaf1ec;
-  --c-accent-text: #3d6649;
-  --c-input-bg: #ffffff;
-  --c-chart-bar: #4a7c59;
-  --c-skeleton-from: #e8e2d9;
-  --c-skeleton-via: #f5f2ec;
+  --c-surface: #1a1a1a;
+  --c-panel: #faf5ee;
+  --c-panel-hover: #f0e8dd;
+  --c-sidebar: #faf5ee;
+  --c-edge: #2d2d2d;
+  --c-edge-light: #e0d5cc;
+  --c-heading: #1a1a1a;
+  --c-prose: #333333;
+  --c-subtle: #777777;
+  --c-faint: #aaaaaa;
+  --c-accent: #c964cf;
+  --c-accent-hover: #b050b8;
+  --c-accent-soft: #f5e0f6;
+  --c-accent-text: #a040a8;
+  --c-input-bg: #fffdf8;
+  --c-chart-bar: #c964cf;
+  --c-skeleton-from: #2a2a2a;
+  --c-skeleton-via: #333333;
+  --c-label: #c964cf;
+  --c-titlebar: #2d2d2d;
 }
 
 .dark {
-  --c-surface: #0f1117;
-  --c-panel: #181b23;
-  --c-panel-hover: #1f2330;
-  --c-sidebar: #141720;
-  --c-edge: #2a2e3a;
-  --c-edge-light: #22252f;
-  --c-heading: #f0eeeb;
-  --c-prose: #b5b0a8;
-  --c-subtle: #8a857e;
-  --c-faint: #5c5750;
-  --c-accent: #68a87b;
-  --c-accent-hover: #7dbf90;
-  --c-accent-soft: #1a2e22;
-  --c-accent-text: #7dbf90;
-  --c-input-bg: #1f2330;
-  --c-chart-bar: #68a87b;
-  --c-skeleton-from: #2a2e3a;
-  --c-skeleton-via: #1f2330;
+  --c-surface: #2a1a22;
+  --c-panel: #1e1418;
+  --c-panel-hover: #2a1e22;
+  --c-sidebar: #1e1418;
+  --c-edge: #555555;
+  --c-edge-light: #3a2a30;
+  --c-heading: #f0e8e0;
+  --c-prose: #ccbbbb;
+  --c-subtle: #998888;
+  --c-faint: #665555;
+  --c-accent: #e080e8;
+  --c-accent-hover: #ee99f0;
+  --c-accent-soft: #3a2038;
+  --c-accent-text: #ee99f0;
+  --c-input-bg: #2a1e22;
+  --c-chart-bar: #e080e8;
+  --c-skeleton-from: #3a2a30;
+  --c-skeleton-via: #2a1e22;
+  --c-label: #e080e8;
+  --c-titlebar: #444444;
 }
 
 @theme {
@@ -61,15 +65,74 @@
   --color-accent-soft: var(--c-accent-soft);
   --color-accent-text: var(--c-accent-text);
   --color-input-bg: var(--c-input-bg);
+  --color-label: var(--c-label);
+  --color-titlebar: var(--c-titlebar);
   --radius: 0.5rem;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: var(--c-surface);
   color: var(--c-prose);
+}
+
+/* Monospace labels for metadata */
+.label-mono {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--c-label);
+}
+
+/* Window-style card with title bar */
+.window-card {
+  background: var(--c-panel);
+  border: 2px solid var(--c-edge);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.window-titlebar {
+  background: var(--c-titlebar);
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.window-titlebar-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.window-titlebar-dots span {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.window-titlebar-dots span:nth-child(1) { background: #ff6b6b; }
+.window-titlebar-dots span:nth-child(2) { background: #feca57; }
+.window-titlebar-dots span:nth-child(3) { background: #48dbfb; }
+
+.window-body {
+  padding: 16px;
+}
+
+/* Dotted separator */
+.dotted-sep {
+  border-bottom: 2px dotted var(--c-edge);
 }
 
 @keyframes slide-in {

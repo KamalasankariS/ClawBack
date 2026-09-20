@@ -409,7 +409,12 @@ export function DeductionDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Main Info */}
-        <div className="lg:col-span-2 bg-panel rounded-lg border border-edge p-4 sm:p-5">
+        <div className="lg:col-span-2 window-card">
+          <div className="window-titlebar">
+            <span>deduction #{deduction.id}</span>
+            <div className="window-titlebar-dots"><span /><span /><span /></div>
+          </div>
+          <div className="p-4 sm:p-5">
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -437,24 +442,24 @@ export function DeductionDetailPage() {
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-subtle">Company</span>
-              <p className="font-medium text-heading">{deduction.company?.name || 'Unknown'}</p>
+              <span className="label-mono">company</span>
+              <p className="font-medium text-heading mt-0.5">{deduction.company?.name || 'Unknown'}</p>
             </div>
             <div>
-              <span className="text-subtle">Retailer</span>
-              <p className="font-medium text-heading">{deduction.retailer?.name || '—'}</p>
+              <span className="label-mono">retailer</span>
+              <p className="font-medium text-heading mt-0.5">{deduction.retailer?.name || '—'}</p>
             </div>
             <div>
-              <span className="text-subtle">Reason</span>
-              <p className="font-medium text-heading">{deduction.reason?.label || '—'}</p>
+              <span className="label-mono">reason</span>
+              <p className="font-medium text-heading mt-0.5">{deduction.reason?.label || '—'}</p>
             </div>
             <div>
-              <span className="text-subtle">Invoice</span>
-              <p className="font-medium font-mono text-heading">{deduction.invoiceNumber || '—'}</p>
+              <span className="label-mono">invoice</span>
+              <p className="font-medium font-mono text-heading mt-0.5">{deduction.invoiceNumber || '—'}</p>
             </div>
             <div>
-              <span className="text-subtle">Deducted Date</span>
-              <p className="font-medium text-heading">{formatDate(deduction.deductedAt)}</p>
+              <span className="label-mono">deducted</span>
+              <p className="font-medium text-heading mt-0.5">{formatDate(deduction.deductedAt)}</p>
             </div>
             {deduction.recoveredAmount && (
               <div>
@@ -469,11 +474,16 @@ export function DeductionDetailPage() {
               </div>
             )}
           </div>
+          </div>
         </div>
 
         {/* Actions Panel */}
-        <div className="bg-panel rounded-lg border border-edge p-5">
-          <h3 className="text-sm font-medium text-prose mb-3">Actions</h3>
+        <div className="window-card">
+          <div className="window-titlebar">
+            <span>actions</span>
+            <div className="window-titlebar-dots"><span /><span /><span /></div>
+          </div>
+          <div className="p-5">
 
           {deduction.status === 'open' && (
             <div className="space-y-2">
@@ -554,12 +564,17 @@ export function DeductionDetailPage() {
               </button>
             </div>
           </div>
+          </div>
         </div>
       </div>
 
       {/* Activity Timeline */}
-      <div className="bg-panel rounded-lg border border-edge p-5">
-        <h3 className="text-sm font-medium text-prose mb-4">Activity Timeline</h3>
+      <div className="window-card">
+        <div className="window-titlebar">
+          <span>activity timeline</span>
+          <div className="window-titlebar-dots"><span /><span /><span /></div>
+        </div>
+        <div className="p-5">
         <div className="space-y-0">
           {deduction.activities.map((a, i) => {
             const isLast = i === deduction.activities.length - 1
@@ -621,6 +636,7 @@ export function DeductionDetailPage() {
           {deduction.activities.length === 0 && (
             <p className="text-sm text-faint">No activity yet.</p>
           )}
+        </div>
         </div>
       </div>
 

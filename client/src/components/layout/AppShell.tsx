@@ -41,8 +41,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="p-4 border-b border-edge">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-8 h-8 rounded-md bg-label/15 border border-label/30 flex items-center justify-center shrink-0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-label)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
                 <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
                 <path d="M12 6v2" />
@@ -50,8 +50,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               </svg>
             </div>
             <div>
-              <h1 className="text-base font-bold text-heading leading-tight">ClawBack</h1>
-              <p className="text-[10px] text-subtle leading-tight">Deduction Recovery</p>
+              <h1 className="text-base font-bold text-heading leading-tight" style={{ fontFamily: "'Bungee', cursive" }}><span className="text-[#fff44f]">C</span>law<span className="text-[#b868d8]">B</span>ack</h1>
+              <p className="text-[11px] text-subtle leading-tight" style={{ fontFamily: "'Annie Use Your Telescope', cursive" }}>Track, dispute, and recover retailer deductions</p>
             </div>
           </Link>
           <div className="flex items-center gap-1">
@@ -137,7 +137,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Sidebar — desktop: always visible, mobile: slide-in */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-56 bg-sidebar border-r border-edge flex flex-col
+        fixed inset-y-0 left-0 z-50 w-56 bg-sidebar border-r-2 border-edge flex flex-col
         transform transition-transform duration-200 ease-in-out
         lg:relative lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -156,15 +156,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-accent/10 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-6 h-6 rounded-md bg-label/15 border border-label/30 flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-label)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14.5 9a3.5 3.5 0 0 0-5 0L7 11.5" />
                 <path d="M9.5 15a3.5 3.5 0 0 0 5 0L17 12.5" />
                 <path d="M12 6v2" />
                 <path d="M12 16v2" />
               </svg>
             </div>
-            <h1 className="text-base font-bold text-heading">ClawBack</h1>
+            <h1 className="text-base font-bold text-heading" style={{ fontFamily: "'Bungee', cursive" }}><span className="text-[#fff44f]">C</span>law<span className="text-[#b868d8]">B</span>ack</h1>
           </div>
           <button
             onClick={toggle}
